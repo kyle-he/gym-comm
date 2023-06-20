@@ -31,8 +31,8 @@ class World:
         new = World(self.arglist)
         new.__dict__ = self.__dict__.copy()
         new.objects = copy.deepcopy(self.objects)
-        new.reachability_graph = self.reachability_graph
-        new.distances = self.distances
+        # new.reachability_graph = self.reachability_graph
+        # new.distances = self.distances
         return new
 
     def update_display(self):

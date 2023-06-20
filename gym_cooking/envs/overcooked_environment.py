@@ -14,7 +14,7 @@ from utils.interact import interact
 from utils.world import World
 from utils.core import *
 from utils.agent import SimAgent
-from misc.game.gameimage import GameImage
+# from misc.game.gameimage import GameImage
 from utils.agent import COLORS
 
 import copy
@@ -146,7 +146,7 @@ class OvercookedEnvironment(gym.Env):
         self.world.height = y
         self.world.perimeter = 2*(self.world.width + self.world.height)
         
-        print(self.rep)
+        # print(self.rep)
 
     def reset(self):
         self.world = World(arglist=self.arglist)
@@ -170,19 +170,19 @@ class OvercookedEnvironment(gym.Env):
 
         self.all_subtasks = self.run_recipes()
         self.world.make_loc_to_gridsquare()
-        self.world.make_reachability_graph()
-        self.cache_distances()
+        # self.world.make_reachability_graph()
+        # self.cache_distances()
         # self.obs_tm1 = copy.copy(self)
 
-        if self.arglist.record or self.arglist.with_image_obs:
-            self.game = GameImage(
-                    filename=self.filename,
-                    world=self.world,
-                    sim_agents=self.sim_agents,
-                    record=self.arglist.record)
-            self.game.on_init()
-            if self.arglist.record:
-                self.game.save_image_obs(self.t)
+        # if self.arglist.record or self.arglist.with_image_obs:
+        #     self.game = GameImage(
+        #             filename=self.filename,
+        #             world=self.world,
+        #             sim_agents=self.sim_agents,
+        #             record=self.arglist.record)
+        #     self.game.on_init()
+        #     if self.arglist.record:
+        #         self.game.save_image_obs(self.t)
 
         # return copy.copy(self)
 
@@ -192,9 +192,13 @@ class OvercookedEnvironment(gym.Env):
     def step(self, action_dict):
         # Track internal environment info.
         self.t += 1
-        print("===============================")
-        print("[environment.step] @ TIMESTEP {}".format(self.t))
-        print("===============================")
+        
+        # if (self.t % 10 == 0):
+        #     print("===============================")
+        #     print("[environment.step] @ TIMESTEP {}".format(self.t))
+        #     print("===============================")
+
+        # print(str(self))
 
         # Get actions.
         for sim_agent in self.sim_agents:
@@ -209,23 +213,31 @@ class OvercookedEnvironment(gym.Env):
 
         # Visualize.
         self.display()
-        self.print_agents()
-        if self.arglist.record:
-            self.game.save_image_obs(self.t)
+        # self.print_agents()
+        # if self.arglist.record:
+        #     self.game.save_image_obs(self.t)
 
         # Get a plan-representation observation.
         new_obs = copy.copy(self)
 
         # Get an image observation
-        image_obs = self.game.get_image_obs()
+        # image_obs = self.game.get_image_obs()
 
         done = self.done()
         reward = self.reward()
         info = {"t": self.t, "obs": new_obs,
-                "image_obs": image_obs,
+                # "image_obs": image_obs,
                 "repr_obs": self.rep,
                 "done": done, "termination_info": self.termination_info}
+        
 
+        # print(str(self))
+        # print("reward: ", self.reward())
+        # if (self.reward() != 0):
+        #     print("================")
+        #     print(self.reward())
+        #     print("================")
+        # print(self.all_subtasks)
         return new_obs, reward, done, info
 
     def done(self):
@@ -264,7 +276,7 @@ class OvercookedEnvironment(gym.Env):
 
     def display(self):
         self.update_display()
-        print(str(self))
+        # print(str(self))
 
     def update_display(self):
         self.rep = self.world.update_display()
@@ -282,7 +294,7 @@ class OvercookedEnvironment(gym.Env):
         # [path for recipe 1, path for recipe 2, ...] where each path is a list of actions
         subtasks = self.sw.get_subtasks(max_path_length=self.arglist.max_num_subtasks)
         all_subtasks = [subtask for path in subtasks for subtask in path]
-        print('Subtasks:', all_subtasks, '\n')
+        # print('Subtasks:', all_subtasks, '\n')
         return all_subtasks
 
     def get_AB_locs_given_objs(self, subtask, subtask_agent_names, start_obj, goal_obj, subtask_action_obj):
@@ -376,12 +388,12 @@ class OvercookedEnvironment(gym.Env):
 
         # Collision between agents and world objects.
         agent1_next_loc = tuple(np.asarray(agent1_loc) + np.asarray(agent1_action))
-        if self.world.get_gridsquare_at(location=agent1_next_loc).collidable:
+        if self.world.get_gridsquare_at(location=agent1_next_loc) == None or self.world.get_gridsquare_at(location=agent1_next_loc).collidable:
             # Revert back because agent collided.
             agent1_next_loc = agent1_loc
-
+            
         agent2_next_loc = tuple(np.asarray(agent2_loc) + np.asarray(agent2_action))
-        if self.world.get_gridsquare_at(location=agent2_next_loc).collidable:
+        if self.world.get_gridsquare_at(location=agent2_next_loc) == None or self.world.get_gridsquare_at(location=agent2_next_loc).collidable:
             # Revert back because agent collided.
             agent2_next_loc = agent2_loc
 
@@ -431,13 +443,13 @@ class OvercookedEnvironment(gym.Env):
                         agent_locations=[agent_i.location, agent_j.location])
                 self.collisions.append(collision)
 
-        print('\nexecute array is:', execute)
+        # print('\nexecute array is:', execute)
 
         # Update agents' actions if collision was detected.
         for i, agent in enumerate(self.sim_agents):
             if not execute[i]:
                 agent.action = (0, 0)
-            print("{} has action {}".format(color(agent.name, agent.color), agent.action))
+            # print("{} has action {}".format(color(agent.name, agent.color), agent.action))
 
     def execute_navigation(self):
         for agent in self.sim_agents:

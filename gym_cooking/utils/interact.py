@@ -8,7 +8,8 @@ def interact(agent, world):
     """
 
     # agent does nothing (i.e. no arrow key)
-    if agent.action == (0, 0):
+    # print(f"agent action: {agent.action}")
+    if (agent.action == np.array([0, 0])).all():
         return
 
     action_x, action_y = world.inbounds(tuple(np.asarray(agent.location) + np.asarray(agent.action)))
