@@ -357,5 +357,38 @@ RepToClass = {
     Rep.PLATE: globals()['Plate'],
 }
 
+# -----------------------------------------------------------
+# CONVERT REP TO NUMBER
+# -----------------------------------------------------------
 
+ClassToRep = {
+    globals()['Floor']: Rep.FLOOR,
+    globals()['Counter']: Rep.COUNTER,
+    globals()['Cutboard']: Rep.CUTBOARD,
+    globals()['Delivery']: Rep.DELIVERY,
+    globals()['Tomato']: Rep.TOMATO,
+    globals()['Lettuce']: Rep.LETTUCE,
+    globals()['Onion']: Rep.ONION,
+    globals()['Plate']: Rep.PLATE,
+}
+
+NUM_OBJECTS = len(ClassToRep)
+
+# Create number mapping dictionary
+NumberMapping = {cls.__name__: i for i, cls in enumerate(ClassToRep)}
+
+def get_number_mapping(object):
+    if object is None:
+        return 0
+    
+    number = None
+    for key in NumberMapping:
+        if key in object.full_name:
+            number = NumberMapping.get(key)
+            break
+
+    assert number is not None, "Class {} is not in the number mapping".format(object.full_name)
+    
+    return number + 1
+        
 

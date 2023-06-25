@@ -23,13 +23,15 @@ env = gym.make('OvercookedMultiCommEnv-v0')
 # to the environment. You can create adaptive partner agents using
 # OnPolicyAgent (for PPO/A2C) or OffPolicyAgent (for DQN/SAC). If you set
 # verbose to true for these agents, you can also see their learning progress
-partner = OnPolicyAgent(PPO('MlpPolicy', env, verbose=1))
+partner = OnPolicyAgent(PPO('MultiInputPolicy', env, verbose=1))
 env.add_partner_agent(partner)
 
 # Finally, you can construct an ego agent and train it in the environment
 
-ego = PPO('MlpPolicy', env, verbose=1)
+ego = PPO('MultiInputPolicy', env, verbose=1)
+print(ego.policy)
+sys.exit()
 ego.learn(total_timesteps=5000)
 
-ego.save("model/ppo_overcooked_june18")
-partner.model.save("model/ppo_overcooked_partner_june18")
+ego.save("model/ppo_overcooked_june24")
+partner.model.save("model/ppo_overcooked_partner_june24")

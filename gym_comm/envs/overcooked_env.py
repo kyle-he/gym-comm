@@ -5,8 +5,10 @@ from pantheonrl.common.multiagentenv import SimultaneousEnv
 # from gym_cooking.envs.overcooked_environment import OvercookedEnv
 from gym_cooking.envs import OvercookedEnvironment
 from utils.world import World
+import utils.core as Core
 import numpy as np
 import re
+import time
 
 def create_arglist():
     parser = argparse.ArgumentParser("Overcooked 2 argument parser")
@@ -40,7 +42,7 @@ def create_arglist():
     parser.add_argument("--model3", type=str, default=None, help="Model type for agent 3 (bd, up, dc, fb, or greedy)")
     parser.add_argument("--model4", type=str, default=None, help="Model type for agent 4 (bd, up, dc, fb, or greedy)")
 
-    return parser.parse_args(["--level", "open-divider_salad", "--num-agents", "2"])
+    return parser.parse_args(["--level", "full-divider_tl", "--num-agents", "2"])
 
 class OvercookedMultiEnv(SimultaneousEnv):
     def __init__(self, ego_agent_idx=0, baselines=False):
@@ -74,12 +76,31 @@ class OvercookedMultiEnv(SimultaneousEnv):
         # self.observation_space = self._setup_observation_space()
 
 
-        observation_array = np.array([[ord(re.sub(r'\x1b\[[0-9;]*m', '', c)) for c in row] for row in self.base_env.rep])
-        shape = observation_array.shape
-        dtype = observation_array.dtype
-        self.observation_space = gym.spaces.Box(low=0, high=255, shape=shape, dtype=dtype)
+        map_observation_array = np.array([[ord(re.sub(r'\x1b\[[0-9;]*m', '', c)) for c in row] for row in self.base_env.rep])
+        shape = map_observation_array.shape
+        # dtype = map_observation_array.dtype
+        dtype = np.uint8
+        map_observation_space = gym.spaces.Box(low=0, high=255, shape=((1,) + shape), dtype=dtype)
 
-        possible_actions = ("up", "down", "left", "right")
+        self.observation_space = map_observation_space
+
+        # self.holding.full_name
+        # self.base_env.sim_agents
+
+        self.observation_space = gym.spaces.Dict({
+            'agent_holding1': gym.spaces.Discrete(Core.NUM_OBJECTS + 1),
+            'agent_holding2': gym.spaces.Discrete(Core.NUM_OBJECTS + 1),
+            'blockworld_map': map_observation_space,
+        })
+
+        # import pdb; pdb.set_trace()
+
+        # self.observation_space = gym.spaces.Tuple((
+        #     gym.spaces.Discrete(Core.NUM_OBJECTS + 1), # agent_holding1
+        #     gym.spaces.Discrete(Core.NUM_OBJECTS + 1), # agent_holding2
+        #     map_observation_space, # blockworld map
+        # ))
+
         # Create a Tuple space for the actions
         self.lA = len(World.NAV_ACTIONS)
         self.action_space = gym.spaces.Discrete(self.lA)
@@ -88,7 +109,8 @@ class OvercookedMultiEnv(SimultaneousEnv):
         self.ego_agent_idx = ego_agent_idx
 
         self.multi_reset()
-        
+
+        print(self.get_observation())
 
     # def _setup_observation_space(self):
     #     dummy_state = self.mdp.get_standard_start_state()
@@ -103,12 +125,22 @@ class OvercookedMultiEnv(SimultaneousEnv):
         shape = observation_array.shape
         dtype = observation_array.dtype
 
+        observations = {
+            'agent_holding1': np.array(Core.get_number_mapping(self.base_env.sim_agents[0].holding)),
+            'agent_holding2': np.array(Core.get_number_mapping(self.base_env.sim_agents[0].holding)),
+            'blockworld_map': observation_array.reshape((1,) + shape)
+        }
+
+        # encode next task, when doing rl when observations are the same then the goal is the same
+        # add finished taskID to observation once its done
+        # show that agent is holding and item 
+
         # low = np.min(observation_array)
         # high = np.max(observation_array)
 
         # print(observation_array)
         # print(shape)
-        return observation_array
+        return observations
 
     def multi_step(self, ego_action, alt_action):
         """
@@ -123,6 +155,8 @@ class OvercookedMultiEnv(SimultaneousEnv):
         ego_action, alt_action = World.NAV_ACTIONS[ego_action], World.NAV_ACTIONS[alt_action]
         # also add potential communication action that adds to ego observation (tell the ego action)
 
+        # use series of maps? 
+
         action_dict = {}
         
         if self.ego_agent_idx == 0:
@@ -133,7 +167,8 @@ class OvercookedMultiEnv(SimultaneousEnv):
             action_dict["agent-0"] = alt_action 
 
         # base env to show what is being communicated
-        new_obs, reward, done, info = self.base_env.step(action_dict)
+        # new_obs, reward, done, info = self.base_env.step(action_dict)
+        reward, done, info = self.base_env.step(action_dict)
 
         # reward shaping
         # rew_shape = info['shaped_r']
@@ -144,7 +179,7 @@ class OvercookedMultiEnv(SimultaneousEnv):
         # if self.ego_agent_idx == 0:
         #     ego_obs, alt_obs = ob_p0, ob_p1
         # else:
-        #     ego_obs, alt_obs = ob_p1, ob_p0
+        #     ego_obs, alt_obs = ob_p1, ob_p
 
         return (self.get_observation(), self.get_observation()), (reward, reward), done, {}#info
 
@@ -158,7 +193,10 @@ class OvercookedMultiEnv(SimultaneousEnv):
         have to deal with randomizing indices.
         """
         self.base_env.reset()
+
+        t0 = time.perf_counter()
         repr_obs = self.get_observation()
+        print("get_observation took: ", time.perf_counter()-t0)
 
         # ob_p0, ob_p1 = self.featurize_fn(self.base_env.state)
         # if self.ego_agent_idx == 0:
@@ -167,6 +205,8 @@ class OvercookedMultiEnv(SimultaneousEnv):
         #     ego_obs, alt_obs = ob_p1, ob_p0
 
         # print(repr_obs.shape)
+
+        print("multi_reset: ", time.time())
 
         return (repr_obs, repr_obs)
 

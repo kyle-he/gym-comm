@@ -29,7 +29,7 @@ from gym.utils import seeding
 
 
 CollisionRepr = namedtuple("CollisionRepr", "time agent_names agent_locations")
-
+import time
 
 class OvercookedEnvironment(gym.Env):
     """Environment object for Overcooked."""
@@ -193,9 +193,10 @@ class OvercookedEnvironment(gym.Env):
         # Track internal environment info.
         self.t += 1
         
-        # if (self.t % 10 == 0):
+        # if (self.t % 5 == 0):
         #     print("===============================")
         #     print("[environment.step] @ TIMESTEP {}".format(self.t))
+        #     print(time.time())
         #     print("===============================")
 
         # print(str(self))
@@ -206,7 +207,7 @@ class OvercookedEnvironment(gym.Env):
 
         # Check collisions.
         self.check_collisions()
-        self.obs_tm1 = copy.copy(self)
+        # self.obs_tm1 = copy.copy(self)
 
         # Execute.
         self.execute_navigation()
@@ -218,17 +219,21 @@ class OvercookedEnvironment(gym.Env):
         #     self.game.save_image_obs(self.t)
 
         # Get a plan-representation observation.
-        new_obs = copy.copy(self)
+        # new_obs = copy.copy(self)
 
         # Get an image observation
         # image_obs = self.game.get_image_obs()
 
         done = self.done()
         reward = self.reward()
-        info = {"t": self.t, "obs": new_obs,
+        info = {"t": self.t,
                 # "image_obs": image_obs,
                 "repr_obs": self.rep,
                 "done": done, "termination_info": self.termination_info}
+        # info = {"t": self.t, "obs": new_obs,
+        #         # "image_obs": image_obs,
+        #         "repr_obs": self.rep,
+        #         "done": done, "termination_info": self.termination_info}
         
 
         # print(str(self))
@@ -238,7 +243,8 @@ class OvercookedEnvironment(gym.Env):
         #     print(self.reward())
         #     print("================")
         # print(self.all_subtasks)
-        return new_obs, reward, done, info
+        # return new_obs, reward, done, info
+        return reward, done, info
 
     def done(self):
         # Done if the episode maxes out

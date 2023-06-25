@@ -1,0 +1,9 @@
+{
+    "python.analysis.extraPaths": [
+        "./gym_cooking"
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "python.formatting.provider": "none"
+}

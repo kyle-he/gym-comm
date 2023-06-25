@@ -72,7 +72,12 @@ def action_from_policy(
 
     : returns: The action, values, and log_probs from the policy
     """
-    obs = obs.reshape((-1,) + policy.observation_space.shape)
+    if type(obs) == dict:
+        for key in obs.keys():
+            obs[key] = obs[key].reshape((-1,) + obs[key].shape)
+    else: 
+        obs = obs.reshape((-1,) + obs.shape)
+    
     with th.no_grad():
         # Convert to pytorch tensor or to TensorDict
         obs_tensor = obs_as_tensor(obs, policy.device)
