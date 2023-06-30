@@ -9,6 +9,7 @@ import utils.core as Core
 import numpy as np
 import re
 import time
+import sys
 
 def create_arglist():
     parser = argparse.ArgumentParser("Overcooked 2 argument parser")
@@ -42,7 +43,7 @@ def create_arglist():
     parser.add_argument("--model3", type=str, default=None, help="Model type for agent 3 (bd, up, dc, fb, or greedy)")
     parser.add_argument("--model4", type=str, default=None, help="Model type for agent 4 (bd, up, dc, fb, or greedy)")
 
-    return parser.parse_args(["--level", "full-divider_tl", "--num-agents", "2"])
+    return parser.parse_args(["--level", "full-divider_tomato", "--num-agents", "2"])
 
 class OvercookedMultiEnv(SimultaneousEnv):
     def __init__(self, ego_agent_idx=0, baselines=False):
@@ -75,12 +76,21 @@ class OvercookedMultiEnv(SimultaneousEnv):
 
         # self.observation_space = self._setup_observation_space()
 
+        map_observation_array = [[re.sub(r'\x1b\[[0-9;]*m', '', c) for c in row] for row in self.base_env.rep]
+        for i in range(len(map_observation_array)):
+            for j in range(len(map_observation_array[i])):
+                if (len(map_observation_array[i][j]) == 1):
+                    map_observation_array[i][j] = ord(map_observation_array[i][j])
+                elif (len(map_observation_array[i][j]) == 2):
+                    map_observation_array[i][j] = int(map_observation_array[i][j][0]) * ord(map_observation_array[i][j][1])
+                else:
+                    print("Cleaned up map observation: ", map_observation_array[i][j])
+                    map_observation_array[i][j] = '?'
 
-        map_observation_array = np.array([[ord(re.sub(r'\x1b\[[0-9;]*m', '', c)) for c in row] for row in self.base_env.rep])
+        map_observation_array = np.array(map_observation_array)
         shape = map_observation_array.shape
-        # dtype = map_observation_array.dtype
-        dtype = np.uint8
-        map_observation_space = gym.spaces.Box(low=0, high=255, shape=((1,) + shape), dtype=dtype)
+        dtype = map_observation_array.dtype
+        map_observation_space = gym.spaces.Box(low=0, high=510, shape=((1,) + shape), dtype=dtype)
 
         self.observation_space = map_observation_space
 
@@ -119,17 +129,49 @@ class OvercookedMultiEnv(SimultaneousEnv):
 
     #     return gym.spaces.Box(-high, high, dtype=np.float64)
 
+    # def clean_observation(self, observation):
+    #     # THIS IS A TEMPERARY HACK!! REMOVE THIS WHEN YOU FIX THE OBSERVATION SPACE
+
+    #     # Iterate through the array
+    #     for i in range(len(observation)):
+    #         for j in range(len(observation[i])):
+    #             # Check if the current element is a string and its length is greater than 1
+    #             if isinstance(observation[i][j], str) and len(observation[i][j]) != 1:
+    #                 # Replace the element with '?'
+    #                 observation[i][j] = '?'
+
+    #     return observation
+    
     def get_observation(self):
         self.base_env.display()
-        observation_array = np.array([[ord(re.sub(r'\x1b\[[0-9;]*m', '', c)) for c in row] for row in self.base_env.rep])
-        shape = observation_array.shape
-        dtype = observation_array.dtype
+
+        map_observation_array = [[re.sub(r'\x1b\[[0-9;]*m', '', c) for c in row] for row in self.base_env.rep]
+        for i in range(len(map_observation_array)):
+            for j in range(len(map_observation_array[i])):
+                if (len(map_observation_array[i][j]) == 1):
+                    map_observation_array[i][j] = ord(map_observation_array[i][j])
+                elif (len(map_observation_array[i][j]) == 2):
+                    map_observation_array[i][j] = int(map_observation_array[i][j][0]) * ord(map_observation_array[i][j][1])
+                else:
+                    print("Cleaned up map observation: ", map_observation_array[i][j])
+                    map_observation_array[i][j] = ord('?')
+
+        map_observation_array = np.array(map_observation_array)
+        
+        shape = map_observation_array.shape
+        dtype = map_observation_array.dtype
 
         observations = {
             'agent_holding1': np.array(Core.get_number_mapping(self.base_env.sim_agents[0].holding)),
-            'agent_holding2': np.array(Core.get_number_mapping(self.base_env.sim_agents[0].holding)),
-            'blockworld_map': observation_array.reshape((1,) + shape)
+            'agent_holding2': np.array(Core.get_number_mapping(self.base_env.sim_agents[1].holding)),
+            'blockworld_map': map_observation_array.reshape((1,) + shape)
         }
+
+        # observations = {
+        #     'agent_holding1': np.array(Core.get_number_mapping(self.base_env.sim_agents[0].holding)),
+        #     'agent_holding2': np.array(Core.get_number_mapping(self.base_env.sim_agents[0].holding)),
+        #     'blockworld_map': observation_array
+        # }
 
         # encode next task, when doing rl when observations are the same then the goal is the same
         # add finished taskID to observation once its done
@@ -141,6 +183,9 @@ class OvercookedMultiEnv(SimultaneousEnv):
         # print(observation_array)
         # print(shape)
         return observations
+    
+    # def string_to_number(self, string):
+
 
     def multi_step(self, ego_action, alt_action):
         """
@@ -169,6 +214,8 @@ class OvercookedMultiEnv(SimultaneousEnv):
         # base env to show what is being communicated
         # new_obs, reward, done, info = self.base_env.step(action_dict)
         reward, done, info = self.base_env.step(action_dict)
+        print(str(self.base_env))
+        print(self.base_env.all_subtasks)
 
         # reward shaping
         # rew_shape = info['shaped_r']
@@ -196,7 +243,7 @@ class OvercookedMultiEnv(SimultaneousEnv):
 
         t0 = time.perf_counter()
         repr_obs = self.get_observation()
-        print("get_observation took: ", time.perf_counter()-t0)
+        # print("get_observation took: ", time.perf_counter()-t0)
 
         # ob_p0, ob_p1 = self.featurize_fn(self.base_env.state)
         # if self.ego_agent_idx == 0:
@@ -206,7 +253,7 @@ class OvercookedMultiEnv(SimultaneousEnv):
 
         # print(repr_obs.shape)
 
-        print("multi_reset: ", time.time())
+        # print("multi_reset: ", time.time())
 
         return (repr_obs, repr_obs)
 

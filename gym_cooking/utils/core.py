@@ -121,6 +121,12 @@ class Delivery(GridSquare):
 # -----------------------------------------------------------
 # Objects are wrappers around foods items, plates, and any combination of them
 
+class ActionDone:
+    NONE = 0
+    CHOPPED = 1
+    MERGED = 2
+    DELIVERED = 3
+
 ObjectRepr = namedtuple("ObjectRepr", "name location is_held")
 
 class Object:
@@ -131,6 +137,9 @@ class Object:
         self.update_names()
         self.collidable = False
         self.dynamic = False
+        
+        ## TODO fix
+        self.reward = ActionDone.NONE
 
     def __str__(self):
         res = "-".join(list(map(lambda x : str(x), sorted(self.contents, key=lambda i: i.name))))
@@ -246,7 +255,8 @@ class Food:
         self.update_names()
 
     def __str__(self):
-        return color(self.rep, self.color)
+        #TODO will need to edit the string representation of the food and OTHER grid objects
+        return color(f"{self.state_index + 1}{self.rep}", self.color)
 
     # def __hash__(self):
     #     return hash((self.state, self.name))

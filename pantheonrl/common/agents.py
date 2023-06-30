@@ -170,7 +170,7 @@ class OnPolicyAgent(Agent):
             obs_shape = self.model.policy.observation_space.shape
             act_shape = self.model.policy.action_space.shape
 
-            import pdb; pdb.set_trace()
+            # import pdb; pdb.set_trace()
             reshaped_obs = obs
             if type(reshaped_obs) == dict:
                 for key in reshaped_obs.keys():

@@ -27,11 +27,8 @@ partner = OnPolicyAgent(PPO('MultiInputPolicy', env, verbose=1))
 env.add_partner_agent(partner)
 
 # Finally, you can construct an ego agent and train it in the environment
-
 ego = PPO('MultiInputPolicy', env, verbose=1)
-print(ego.policy)
-sys.exit()
-ego.learn(total_timesteps=5000)
+ego.learn(total_timesteps=100000)
 
-ego.save("model/ppo_overcooked_june24")
-partner.model.save("model/ppo_overcooked_partner_june24")
+ego.save("model/open_divider_tomato/ppo_ego1")
+partner.model.save("model/open_divider_tomato/ppo_partner1")

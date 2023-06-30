@@ -27,6 +27,8 @@ import gym
 from gym import error, spaces, utils
 from gym.utils import seeding
 
+import sys
+
 
 CollisionRepr = namedtuple("CollisionRepr", "time agent_names agent_locations")
 import time
@@ -46,6 +48,8 @@ class OvercookedEnvironment(gym.Env):
         self.collisions = []
         self.termination_info = ""
         self.successful = False
+
+        self.goal_objects_count = 0
         
         self.reset()
         self.display()
@@ -235,13 +239,6 @@ class OvercookedEnvironment(gym.Env):
         #         "repr_obs": self.rep,
         #         "done": done, "termination_info": self.termination_info}
         
-
-        # print(str(self))
-        # print("reward: ", self.reward())
-        # if (self.reward() != 0):
-        #     print("================")
-        #     print(self.reward())
-        #     print("================")
         # print(self.all_subtasks)
         # return new_obs, reward, done, info
         return reward, done, info
@@ -267,14 +264,40 @@ class OvercookedEnvironment(gym.Env):
                 if not any([gol == delivery_loc for gol in goal_obj_locs]):
                     self.termination_info = ""
                     self.successful = False
+
                     return False
 
         self.termination_info = "Terminating because all deliveries were completed"
         self.successful = True
+
         return True
+    
+    def subtask_reward(self, subtask):
+        if isinstance(subtask, recipe.Deliver):
+            _, goal_obj = nav_utils.get_subtask_obj(subtask)
+            delivery_loc = list(filter(lambda o: o.name=='Delivery', self.world.get_object_list()))[0].location
+            goal_obj_locs = self.world.get_all_object_locs(obj=goal_obj)
+            if any([gol == delivery_loc for gol in goal_obj_locs]):
+                print("Subtask Deliver Completed: {}".format(subtask))
+                return 1
+        else:
+            #TODO only works if the subtasks stay static, will need to improve later
+            _, goal_obj = nav_utils.get_subtask_obj(subtask)
+            if self.goal_objects_count > len(self.world.get_all_object_locs(obj=goal_obj)):
+                print("Subtask Other Completed: {}".format(subtask))
+                import pdb; pdb.set_trace()
+                return 1
+            
+            self.goal_objects_count = len(self.world.get_all_object_locs(obj=goal_obj))
+
+        return 0
 
     def reward(self):
-        return 1 if self.successful else 0
+        reward = 0
+        for subtask in self.all_subtasks:
+            reward += self.subtask_reward(subtask)
+        
+        return reward
 
     def print_agents(self):
         for sim_agent in self.sim_agents:

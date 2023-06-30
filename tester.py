@@ -55,13 +55,15 @@ def run_test(ego, env, num_episodes, render=False):
         if render:
             env.render()
         while not done:
+            # sleep (0.1)
             action = ego.get_action(obs, False)
             obs, newreward, done, _ = env.step(action)
             reward += newreward
+            print("Current Reward: ", newreward)
 
-            if render:
-                env.render()
-                sleep(1/60)
+            # if render:
+            #     env.render()
+                # sleep(1/60)
 
         rewards.append(reward)
 
