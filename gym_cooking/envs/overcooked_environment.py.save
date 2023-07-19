@@ -305,7 +305,6 @@ class OvercookedEnvironment(gym.Env):
                 #TODO subtasks is only appending the index, might not be great. create some kind of subtask mapping
                 self.completed_subtasks.append(i)
                 print("Completed: ", self.completed_subtasks)
-                print(str(self))
 
         # print("Reward: ", reward)
         # print(self.goal_objects_count)

@@ -25,6 +25,9 @@ class Rep:
     ONION = 'o'
     PLATE = 'p'
 
+
+## TODO fix hacky method, using prime numbers
+
 class GridSquare:
     def __init__(self, name, location):
         self.name = name
@@ -34,6 +37,11 @@ class GridSquare:
         self.collidable = True     # cannot go through
         self.dynamic = False       # cannot move around
 
+        self.value = -1           # used for observation
+
+    def get_value(self):
+        return self.value
+    
     def __str__(self):
         return color(self.rep, self.color)
 
@@ -62,6 +70,8 @@ class Floor(GridSquare):
         self.color = None
         self.rep = Rep.FLOOR
         self.collidable = False
+
+        self.value = 5
     def __eq__(self, other):
         return GridSquare.__eq__(self, other)
     def __hash__(self):
@@ -71,6 +81,8 @@ class Counter(GridSquare):
     def __init__(self, location):
         GridSquare.__init__(self,"Counter", location)
         self.rep = Rep.COUNTER
+
+        self.value = 6
     def __eq__(self, other):
         return GridSquare.__eq__(self, other)
     def __hash__(self):
@@ -81,6 +93,8 @@ class AgentCounter(Counter):
         GridSquare.__init__(self,"Agent-Counter", location)
         self.rep = Rep.COUNTER
         self.collidable = True
+
+        self.value = Rep.COUNTER + 1
     def __eq__(self, other):
         return Counter.__eq__(self, other)
     def __hash__(self):
@@ -93,6 +107,8 @@ class Cutboard(GridSquare):
         GridSquare.__init__(self, "Cutboard", location)
         self.rep = Rep.CUTBOARD
         self.collidable = True
+
+        self.value = 7
     def __eq__(self, other):
         return GridSquare.__eq__(self, other)
     def __hash__(self):
@@ -103,6 +119,8 @@ class Delivery(GridSquare):
         GridSquare.__init__(self, "Delivery", location)
         self.rep = Rep.DELIVERY
         self.holding = []
+
+        self.value = 8
     def acquire(self, obj):
         obj.location = self.location
         self.holding.append(obj)
@@ -121,11 +139,11 @@ class Delivery(GridSquare):
 # -----------------------------------------------------------
 # Objects are wrappers around foods items, plates, and any combination of them
 
-class ActionDone:
+class ObjectActionOccuring:
     NONE = 0
-    CHOPPED = 1
-    MERGED = 2
-    DELIVERED = 3
+    CHOP = 1
+    MERGE = 2
+    DELIVER = 3
 
 ObjectRepr = namedtuple("ObjectRepr", "name location is_held")
 
@@ -137,9 +155,21 @@ class Object:
         self.update_names()
         self.collidable = False
         self.dynamic = False
+
+        self.value = 1
         
-        ## TODO fix
-        self.reward = ActionDone.NONE
+        # self.reward = ObjectActionOccuring.NONE
+    
+    def get_value(self):
+        val = 1
+        for object in self.contents:
+            # if isinstance(object, Food):
+            #     val *= object.value * (object.state_index + 1)
+            # else:
+            val *= object.value
+        
+        return val
+        # print("Object Value: ", val)
 
     def __str__(self):
         res = "-".join(list(map(lambda x : str(x), sorted(self.contents, key=lambda i: i.name))))
@@ -189,6 +219,8 @@ class Object:
         assert not (self.needs_chopped())
         self.update_names()
 
+        # self.reward = ObjectActionOccuring.CHOP
+
     def merge(self, obj):
         if isinstance(obj, Object):
             # move obj's contents into this instance
@@ -198,6 +230,8 @@ class Object:
         else:
             self.contents.append(obj)
         self.update_names()
+
+        # self.reward = ObjectActionOccuring.MERGE
 
     def unmerge(self, full_name):
         # remove by full_name, assumming all unique contents
@@ -299,6 +333,7 @@ class Tomato(Food):
         self.state_index = state_index   # index in food's state sequence
         self.state_seq = FoodSequence.FRESH_CHOPPED
         self.rep = 't'
+        self.value = 1
         self.name = 'Tomato'
         Food.__init__(self)
     def __hash__(self):
@@ -313,6 +348,7 @@ class Lettuce(Food):
         self.state_index = state_index   # index in food's state sequence
         self.state_seq = FoodSequence.FRESH_CHOPPED
         self.rep = 'l'
+        self.value = 2
         self.name = 'Lettuce'
         Food.__init__(self)
     def __eq__(self, other):
@@ -325,6 +361,7 @@ class Onion(Food):
         self.state_index = state_index   # index in food's state sequence
         self.state_seq = FoodSequence.FRESH_CHOPPED
         self.rep = 'o'
+        self.value = 3
         self.name = 'Onion'
         Food.__init__(self)
     def __eq__(self, other):
@@ -338,6 +375,7 @@ class Onion(Food):
 class Plate:
     def __init__(self):
         self.rep = "p"
+        self.value = 4
         self.name = 'Plate'
         self.full_name = 'Plate'
         self.color = 'white'

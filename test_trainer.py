@@ -10,7 +10,9 @@ from stable_baselines3 import PPO
 
 from pantheonrl.common.agents import OnPolicyAgent
 import gym_comm
+
 import sys
+from datetime import datetime
 
 sys.path.append("/home/kyle/code/gymRL/gym_cooking")
 # from overcookedgym.overcooked_utils import LAYOUT_LIST
@@ -28,7 +30,13 @@ env.add_partner_agent(partner)
 
 # Finally, you can construct an ego agent and train it in the environment
 ego = PPO('MultiInputPolicy', env, verbose=1)
-ego.learn(total_timesteps=100000)
+ego.learn(total_timesteps=500000)
 
-ego.save("model/open_divider_tomato/ppo_ego1")
-partner.model.save("model/open_divider_tomato/ppo_partner1")
+# Get the current time
+current_time = datetime.now()
+
+# Format the current time for file name
+formatted_time = current_time.strftime("%Y-%m-%d_%H-%M-%S") 
+
+ego.save(f"model/open-divider_tomato/{formatted_time}/ppo_ego_500")
+partner.model.save(f"model/open-divider_tomato/{formatted_time}/ppo_partner1_500")

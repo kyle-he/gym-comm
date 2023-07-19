@@ -66,6 +66,12 @@ def run_test(ego, env, num_episodes, render=False):
                 # sleep(1/60)
 
         rewards.append(reward)
+        print("------------------ Episode Complete ------------------")
+        print("All Subtasks: ", env.base_env.all_subtasks)
+        print("Completed Subtasks: ", [env.base_env.all_subtasks[i] for i in env.base_env.completed_subtasks])
+        print("Total Reward: ", reward)
+        print(str(env.base_env))
+        import pdb; pdb.set_trace()
 
     env.close()
     print(f"Average Reward: {sum(rewards)/num_episodes}")
