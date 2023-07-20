@@ -175,24 +175,9 @@ class OvercookedEnvironment(gym.Env):
 
         self.all_subtasks = self.run_recipes()
         self.goal_objects_count = len(self.all_subtasks) * [0]
-        self.completed_subtasks = []
+        self.completed_subtasks = len(self.all_subtasks) * [0]
 
         self.world.make_loc_to_gridsquare()
-        # self.world.make_reachability_graph()
-        # self.cache_distances()
-        # self.obs_tm1 = copy.copy(self)
-
-        # if self.arglist.record or self.arglist.with_image_obs:
-        #     self.game = GameImage(
-        #             filename=self.filename,
-        #             world=self.world,
-        #             sim_agents=self.sim_agents,
-        #             record=self.arglist.record)
-        #     self.game.on_init()
-        #     if self.arglist.record:
-        #         self.game.save_image_obs(self.t)
-
-        # return copy.copy(self)
 
     def close(self):
         return
@@ -200,14 +185,6 @@ class OvercookedEnvironment(gym.Env):
     def step(self, action_dict):
         # Track internal environment info.
         self.t += 1
-        
-        # if (self.t % 5 == 0):
-        #     print("===============================")
-        #     print("[environment.step] @ TIMESTEP {}".format(self.t))
-        #     print(time.time())
-        #     print("===============================")
-
-        # print(str(self))
 
         # Get actions.
         for sim_agent in self.sim_agents:
@@ -222,29 +199,13 @@ class OvercookedEnvironment(gym.Env):
 
         # Visualize.
         self.display()
-        # self.print_agents()
-        # if self.arglist.record:
-        #     self.game.save_image_obs(self.t)
-
-        # Get a plan-representation observation.
-        # new_obs = copy.copy(self)
-
-        # Get an image observation
-        # image_obs = self.game.get_image_obs()
 
         done = self.done()
         reward = self.reward()
         info = {"t": self.t,
-                # "image_obs": image_obs,
                 "repr_obs": self.rep,
                 "done": done, "termination_info": self.termination_info}
-        # info = {"t": self.t, "obs": new_obs,
-        #         # "image_obs": image_obs,
-        #         "repr_obs": self.rep,
-        #         "done": done, "termination_info": self.termination_info}
         
-        # print(self.all_subtasks)
-        # return new_obs, reward, done, info
         return reward, done, info
 
     def done(self):
@@ -302,15 +263,9 @@ class OvercookedEnvironment(gym.Env):
             subtasks_reward = self.subtask_reward(i, subtask)
             reward += subtasks_reward
             if (subtasks_reward != 0):
-                #TODO subtasks is only appending the index, might not be great. create some kind of subtask mapping
-                self.completed_subtasks.append(i)
+                self.completed_subtasks[i] = 1
                 print("Completed: ", self.completed_subtasks)
                 print(str(self))
-
-        # print("Reward: ", reward)
-        # print(self.goal_objects_count)
-        # if reward > 0:
-        #     import pdb; pdb.set_trace()
         
         return reward
 

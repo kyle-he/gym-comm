@@ -25,9 +25,6 @@ class Rep:
     ONION = 'o'
     PLATE = 'p'
 
-
-## TODO fix hacky method, using prime numbers
-
 class GridSquare:
     def __init__(self, name, location):
         self.name = name
@@ -139,11 +136,11 @@ class Delivery(GridSquare):
 # -----------------------------------------------------------
 # Objects are wrappers around foods items, plates, and any combination of them
 
-class ObjectActionOccuring:
-    NONE = 0
-    CHOP = 1
-    MERGE = 2
-    DELIVER = 3
+# class ObjectActionOccuring:
+#     NONE = 0
+#     CHOP = 1
+#     MERGE = 2
+#     DELIVER = 3
 
 ObjectRepr = namedtuple("ObjectRepr", "name location is_held")
 
@@ -157,19 +154,6 @@ class Object:
         self.dynamic = False
 
         self.value = 1
-        
-        # self.reward = ObjectActionOccuring.NONE
-    
-    def get_value(self):
-        val = 1
-        for object in self.contents:
-            # if isinstance(object, Food):
-            #     val *= object.value * (object.state_index + 1)
-            # else:
-            val *= object.value
-        
-        return val
-        # print("Object Value: ", val)
 
     def __str__(self):
         res = "-".join(list(map(lambda x : str(x), sorted(self.contents, key=lambda i: i.name))))
@@ -389,7 +373,28 @@ class Plate:
         return Plate()
     def needs_chopped(self):
         return False
+    
+# -----------------------------------------------------------
+# Object Channel Mappings
+# -----------------------------------------------------------
 
+ObjectChannel = {
+    'Tomato': 0,
+    'Lettuce': 1,
+    'Onion': 2,
+    'Plate': 3,
+}
+
+NUM_OBJECT_CHANNELS = len(ObjectChannel)
+
+def get_object_channel(object):
+    assert object is not None, "Object can not be None"
+
+    channel = ObjectChannel.get(object.name)
+
+    assert channel is not None, "Object {} is not in the object channel mapping".format(object.name)
+
+    return channel
 
 # -----------------------------------------------------------
 # PARSING
@@ -405,38 +410,40 @@ RepToClass = {
     Rep.PLATE: globals()['Plate'],
 }
 
+
+
 # -----------------------------------------------------------
 # CONVERT REP TO NUMBER
 # -----------------------------------------------------------
 
-ClassToRep = {
-    globals()['Floor']: Rep.FLOOR,
-    globals()['Counter']: Rep.COUNTER,
-    globals()['Cutboard']: Rep.CUTBOARD,
-    globals()['Delivery']: Rep.DELIVERY,
-    globals()['Tomato']: Rep.TOMATO,
-    globals()['Lettuce']: Rep.LETTUCE,
-    globals()['Onion']: Rep.ONION,
-    globals()['Plate']: Rep.PLATE,
-}
+# ClassToRep = {
+#     globals()['Floor']: Rep.FLOOR,
+#     globals()['Counter']: Rep.COUNTER,
+#     globals()['Cutboard']: Rep.CUTBOARD,
+#     globals()['Delivery']: Rep.DELIVERY,
+#     globals()['Tomato']: Rep.TOMATO,
+#     globals()['Lettuce']: Rep.LETTUCE,
+#     globals()['Onion']: Rep.ONION,
+#     globals()['Plate']: Rep.PLATE,
+# }
 
-NUM_OBJECTS = len(ClassToRep)
+# NUM_OBJECTS = len(ClassToRep)
 
-# Create number mapping dictionary
-NumberMapping = {cls.__name__: i for i, cls in enumerate(ClassToRep)}
+# # Create number mapping dictionary
+# NumberMapping = {cls.__name__: i for i, cls in enumerate(ClassToRep)}
 
-def get_number_mapping(object):
-    if object is None:
-        return 0
+# def get_number_mapping(object):
+#     if object is None:
+#         return 0
     
-    number = None
-    for key in NumberMapping:
-        if key in object.full_name:
-            number = NumberMapping.get(key)
-            break
+#     number = None
+#     for key in NumberMapping:
+#         if key in object.full_name:
+#             number = NumberMapping.get(key)
+#             break
 
-    assert number is not None, "Class {} is not in the number mapping".format(object.full_name)
+#     assert number is not None, "Class {} is not in the number mapping".format(object.full_name)
     
-    return number + 1
+#     return number + 1
         
 
