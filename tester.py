@@ -17,7 +17,6 @@ sys.path.append("/home/kyle/code/gymRL/gym_cooking")
 EGO_LIST = ['PPO', 'ModularAlgorithm', 'BC'] + ADAP_TYPES
 PARTNER_LIST = ['PPO', 'DEFAULT', 'BC'] + ADAP_TYPES
 
-
 def input_check(args):
     # Env checking
     if args.env == 'OvercookedMultiEnv-v0':

@@ -27,7 +27,6 @@ Here is an example of a basic command to train a model.
 
 ```
 python3 trainer.py --env-config '{"level": "open-divider_tomato", "num_agents": 2, "max_num_timesteps": 500}' -t 500000
-
 ```
 
 To see more advanced usage, run
