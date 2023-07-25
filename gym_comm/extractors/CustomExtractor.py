@@ -46,7 +46,6 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
         # self.extractors contain nn.Modules that do all the processing.
         for key, extractor in self.extractors.items():
             encoded_tensor_list.append(extractor(observations[key]))
-            print(observations)
         # Return a (B, self._features_dim) PyTorch tensor, where B is batch dimension.
 
         return th.cat(encoded_tensor_list, dim=1)
@@ -73,7 +72,7 @@ class SimpleCNN(nn.Module):
 #         self.conv1 = nn.Conv2d(input_channels, 64, kernel_size=3)
 #         self.relu = nn.ReLU()
 #         self.maxpool = nn.MaxPool2d(2)
-#         # self.conv2 = nn.Conv2d(64, 128, kernel_size=1)
+#         # self.conv2 = nn.Conv2d(64, 128, kernel_size=1) 
 #         # self.relu = nn.ReLU()
 #         # self.maxpool = nn.MaxPool2d(2)
 #         self.fc1 = nn.Linear(64 * 2 * 2, 128)

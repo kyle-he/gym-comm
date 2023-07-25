@@ -26,10 +26,12 @@ And you should be all set!
 Here is an example of a basic command to train a model. 
 
 ```
-python3 trainer.py --env-config '{"level": "open-divider_tomato", "num_agents": 2, "max_num_timesteps": 500}' -t 500000
+python3 trainer.py --env-config '{"level": "open-divider_tomato", "num_agents": 2, "max_num_timesteps": 500}' -t 500000 --log
 ```
 
 To see more advanced usage, run
 ```
 python3 trainer.py --help
 ```
+
+To test this trained model, you can access `runs/runlist.csv`, where you will be given a list of previously trained models and the command to test them.

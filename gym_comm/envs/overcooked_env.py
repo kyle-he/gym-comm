@@ -191,11 +191,11 @@ class OvercookedMultiEnv(SimultaneousEnv):
         reward, done, _ = self.base_env.step(action_dict)
 
         reward -= self.cost_fn()
-        # if (reward != -1):
-        #     print("Reward Value: ", reward)
+        if (reward != -1):
+            print("Reward Value: ", reward)
 
-        print(str(self.base_env))
-        print("Reward Value: ", reward)
+        # print(str(self.base_env))
+        # print("Reward Value: ", reward)
 
         return (self.get_observation(), self.get_observation()), (reward, reward), done, {} #info
 
