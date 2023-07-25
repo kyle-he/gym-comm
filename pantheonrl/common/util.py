@@ -2,6 +2,7 @@ from typing import Tuple, Union
 
 import numpy as np
 import torch as th
+import copy
 
 import gym
 from gym.spaces import Box, Discrete, MultiBinary, MultiDiscrete, Space
@@ -72,15 +73,18 @@ def action_from_policy(
 
     : returns: The action, values, and log_probs from the policy
     """
-    if type(obs) == dict:
-        for key in obs.keys():
-            obs[key] = obs[key].reshape((-1,) + obs[key].shape)
+    new_obs = copy.deepcopy(obs)
+    if type(new_obs) == dict:
+        for key in new_obs.keys():
+            # print(new_obs[key].shape)
+            new_obs[key] = new_obs[key].reshape((-1,) + new_obs[key].shape)
+            # print("After: ", new_obs[key].shape)
     else: 
-        obs = obs.reshape((-1,) + obs.shape)
+        new_obs = new_obs.reshape((-1,) + new_obs.shape)
     
     with th.no_grad():
         # Convert to pytorch tensor or to TensorDict
-        obs_tensor = obs_as_tensor(obs, policy.device)
+        obs_tensor = obs_as_tensor(new_obs, policy.device)
         actions, values, log_probs = policy.forward(obs_tensor)
 
     return actions.cpu().numpy(), values, log_probs

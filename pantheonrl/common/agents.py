@@ -6,6 +6,7 @@ import time
 
 import numpy as np
 import torch as th
+import copy
 
 from .util import action_from_policy, clip_actions, resample_noise
 from .trajsaver import TransitionsMinimal
@@ -171,7 +172,7 @@ class OnPolicyAgent(Agent):
             act_shape = self.model.policy.action_space.shape
 
             # import pdb; pdb.set_trace()
-            reshaped_obs = obs
+            reshaped_obs = copy.deepcopy(obs)
             if type(reshaped_obs) == dict:
                 for key in reshaped_obs.keys():
                     reshaped_obs[key] = reshaped_obs[key].reshape((-1,) + reshaped_obs[key].shape)

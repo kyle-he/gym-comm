@@ -1,48 +1,65 @@
-import argparse
-import json
-from time import sleep
+import gym
+from stable_baselines3 import PPO
 
+from pantheonrl.common.agents import OnPolicyAgent
+import gym_comm
+import argparse
+
+import sys
+import json
+from datetime import datetime
+from gym_comm.extractors.CustomExtractor import CustomCombinedExtractor
+from pantheonrl.common.agents import OnPolicyAgent, StaticPolicyAgent
 import numpy as np
 
-# from trainer import (generate_env, gen_fixed, gen_default, EnvException,
-#                      ENV_LIST, ADAP_TYPES, LAYOUT_LIST)
+import time
 
-from trainer import (generate_env, gen_fixed, gen_default, EnvException,
-                     ENV_LIST, ADAP_TYPES)
+# TODO This is super hacky, but it works. There are some weird bugs with how gym_comm is imported in relation to gym_cooking, not sure how to fix this. 
+import os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+relative_path = os.path.join(current_dir, 'gym_cooking')
+sys.path.append(relative_path)
+# =============================
 
-import gym_comm
-import sys
-sys.path.append("/home/kyle/code/gymRL/gym_cooking")
+class EnvException(Exception):
+    """ Raise when parameters do not align with environment """
 
-EGO_LIST = ['PPO', 'ModularAlgorithm', 'BC'] + ADAP_TYPES
-PARTNER_LIST = ['PPO', 'DEFAULT', 'BC'] + ADAP_TYPES
+def create_arglist():
+    parser = argparse.ArgumentParser("Overcooked 2 - Tester Argument parser")
 
-def input_check(args):
-    # Env checking
-    if args.env == 'OvercookedMultiEnv-v0':
-        if 'layout_name' not in args.env_config:
-            raise EnvException(f"layout_name needed for {args.env}")
-        elif args.env_config['layout_name'] not in LAYOUT_LIST:
-            raise EnvException(
-                f"{args.env_config['layout_name']} is not a valid layout")
+    parser.add_argument('--env-config',
+                    type=json.loads,
+                    default={},
+                    help='Config for the environment')
+    
+    parser.add_argument('--ego-load',
+                        help='File to load the ego agent from')
+    
+    parser.add_argument('--alt-load',
+                        help='File to load the partner agent from')
+    
+    parser.add_argument('--total-episodes', '-t',
+                        type=int,
+                        default=100,
+                        help='Number of episodes to run')
+    
+    parser.add_argument('--render',
+                        action='store_true',
+                        help='Render the environment as it is being run')
+    
+    return parser.parse_args()
 
-    # Construct ego config
-    if 'verbose' not in args.ego_config:
-        args.ego_config['verbose'] = 1
+def gen_fixed(policy_type, location):
+    agent = gen_load(policy_type, location)
+    return StaticPolicyAgent(agent.policy)
 
-    if args.ego_load is None:
-        raise EnvException("Need to provide file for ego to load")
+def gen_load(policy_type, location):
+    if policy_type == 'PPO':
+        agent = PPO.load(location)
+    else:
+        raise EnvException("Not a valid FIXED/LOAD policy")
 
-    if (args.alt_load is None) != (args.alt == 'DEFAULT'):
-        raise EnvException("Load policy if and only if alt is not DEFAULT")
-
-
-def generate_agent(env, policy_type, config, location):
-    if policy_type == 'DEFAULT':
-        return gen_default(config, env)
-
-    return gen_fixed(config, policy_type, location)
-
+    return agent
 
 def run_test(ego, env, num_episodes, render=False):
     env.set_ego_extractor(lambda obs: obs)
@@ -54,11 +71,11 @@ def run_test(ego, env, num_episodes, render=False):
         if render:
             env.render()
         while not done:
-            # sleep (0.1)
+            time.sleep (0.1)
             action = ego.get_action(obs, False)
             obs, newreward, done, _ = env.step(action)
             reward += newreward
-            print("Current Reward: ", newreward)
+            # print("Current Reward: ", newreward)
 
             # if render:
             #     env.render()
@@ -67,146 +84,33 @@ def run_test(ego, env, num_episodes, render=False):
         rewards.append(reward)
         print("------------------ Episode Complete ------------------")
         print("All Subtasks: ", env.base_env.all_subtasks)
-        print("Completed Subtasks: ", [env.base_env.all_subtasks[i] for i in env.base_env.completed_subtasks])
+        print("Completed Subtasks: ")
+        for i, complete in enumerate(env.base_env.completed_subtasks):
+            if complete == 1:
+                print(f"{env.base_env.all_subtasks[i]}")
         print("Total Reward: ", reward)
         print(str(env.base_env))
-        import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
 
     env.close()
     print(f"Average Reward: {sum(rewards)/num_episodes}")
     print(f"Standard Deviation: {np.std(rewards)}")
 
+policy_kwargs = dict(
+    features_extractor_class=CustomCombinedExtractor,
+)
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description='''\
-            Test ego and partner in an environment.
+args = create_arglist()
+print(f"Arguments: {args}")
 
-            Environments:
-            -------------
-            All MultiAgentEnv environments are supported. Some have additional
-            parameters that can be passed into --env-config. Specifically,
-            OvercookedMultiEnv-v0 has a required layout_name parameter, so
-            one must add:
+env = gym.make('OvercookedMultiCommEnv-v0', **args.env_config)
+altenv = env.getDummyEnv(1)
+print(f"Environment: {env}; Alt Environment: {altenv}")
 
-                --env-config '{"layout_name":"[SELECTED_LAYOUT]"}'
+ego = gen_fixed('PPO', args.ego_load)
+print(f'Ego: {ego}')
+alt = gen_fixed('PPO', args.alt_load)
+env.add_partner_agent(alt)
+print(f'Alt: {alt}')
 
-            OvercookedMultiEnv-v0 also has parameters `ego_agent_idx` and
-            `baselines`, but these have default initializations. LiarsDice-v0
-            has an optional parameter, `probegostart`.
-
-            The environment can be wrapped with a framestack, which transforms
-            the observation to stack previous observations as a workaround
-            for recurrent networks not being supported. It can also be wrapped
-            with a recorder wrapper, which will write the transitions to the
-            given file.
-
-            Ego-Agent:
-            ----------
-            The ego-agent is considered the main agent in the environment.
-            From the perspective of the ego agent, the environment functions
-            like a regular gym environment.
-
-            Supported ego-agent algorithms include PPO, ModularAlgorithm, ADAP,
-            and ADAP_MULT. The default parameters of these algorithms can
-            be overriden using --ego-config.
-
-            Alt-Agent:
-            -----------
-            The alt-agents are the partner agents that are embedded in the
-            environment. If multiple are listed, the environment randomly
-            samples one of them to be the partner at the start of each episode.
-
-            Supported alt-agent algorithms include PPO, ADAP, ADAP_MULT,
-            and DEFAULT. DEFAULT refers to the default hand-made policy
-            in the environment (if it exists).
-
-            Default parameters for these algorithms can be overriden using
-            --alt-config.
-
-            NOTE:
-            All configs are based on the json format, and will be interpreted
-            as dictionaries for the kwargs of their initializers.
-
-            Example usage (Overcooked with ADAP agents that share the latent
-            space):
-
-            python3 tester.py OvercookedMultiEnv-v0 ADAP ADAP --env-config
-            '{"layout_name":"random0"}' -l
-            ''')
-
-    parser.add_argument('env',
-                        choices=ENV_LIST,
-                        help='The environment to train in')
-
-    parser.add_argument('ego',
-                        choices=EGO_LIST,
-                        help='Algorithm for the ego agent')
-
-    parser.add_argument('alt',
-                        choices=PARTNER_LIST,
-                        help='Algorithm for the partner agent')
-
-    parser.add_argument('--total-episodes', '-t',
-                        type=int,
-                        default=100,
-                        help='Number of episodes to run')
-
-    parser.add_argument('--device', '-d',
-                        default='auto',
-                        help='Device to run pytorch on')
-    parser.add_argument('--seed', '-s',
-                        type=int,
-                        help='Seed for randomness')
-
-    parser.add_argument('--ego-config',
-                        type=json.loads,
-                        default={},
-                        help='Config for the ego agent')
-
-    parser.add_argument('--alt-config',
-                        type=json.loads,
-                        default={},
-                        help='Config for the partner agent')
-
-    parser.add_argument('--env-config',
-                        type=json.loads,
-                        default={},
-                        help='Config for the environment')
-
-    # Wrappers
-    parser.add_argument('--framestack', '-f',
-                        type=int,
-                        default=1,
-                        help='Number of observations to stack')
-
-    parser.add_argument('--record', '-r',
-                        help='Saves joint trajectory into file specified')
-
-    parser.add_argument('--render',
-                        action='store_true',
-                        help='Render the environment as it is being run')
-
-    parser.add_argument('--ego-load',
-                        help='File to load the ego agent from')
-    parser.add_argument('--alt-load',
-                        help='File to load the partner agent from')
-
-    args = parser.parse_args()
-
-    input_check(args)
-
-    print(f"Arguments: {args}")
-    env, altenv = generate_env(args)
-    print(f"Environment: {env}; Partner env: {altenv}")
-    ego = generate_agent(env, args.ego, args.ego_config, args.ego_load)
-    print(f'Ego: {ego}')
-    alt = generate_agent(altenv, args.alt, args.alt_config, args.alt_load)
-    env.add_partner_agent(alt)
-    print(f'Alt: {alt}')
-
-    run_test(ego, env, args.total_episodes, args.render)
-
-    if args.record is not None:
-        env.get_transitions().write_transition(args.record)
+run_test(ego, env, args.total_episodes, args.render)

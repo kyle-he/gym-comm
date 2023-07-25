@@ -83,21 +83,26 @@ class OvercookedMultiEnv(SimultaneousEnv):
         if baselines: np.random.seed(0)
 
         # map observation array
-        observation_space_array = np.array([[0 for i in range(self.base_env.world.width)] for j in range(self.base_env.world.height)])
-        map_observation_space = gym.spaces.Box(low=0, high=8, shape=((1,) + observation_space_array.shape), dtype=observation_space_array.dtype)
+        # TODO look at the dimensions of map, why remove reshape (1, ) +
+        # observation_space_array = np.array([[0 for i in range(self.base_env.world.width)] for j in range(self.base_env.world.height)])
+        # map_observation_space = gym.spaces.Box(low=0, high=8, shape=((1,) + observation_space_array.shape), dtype=observation_space_array.dtype)
+        # map_observation_space = gym.spaces.Box(low=0, high=8, shape=(observation_space_array.shape), dtype=observation_space_array.dtype)
 
         # 0 = nothing, 1 = object, 2 = chopped object
-        object_observation_space_array = np.array([[[0 for i in range(self.base_env.world.width)] for j in range(self.base_env.world.height)] for k in range(Core.NUM_OBJECT_CHANNELS)])
-        object_observation_space = gym.spaces.Box(low=0, high=2, shape=((1,) + object_observation_space_array.shape), dtype=object_observation_space_array.dtype)
+        map_observation_space_array = np.array([[[0 for i in range(self.base_env.world.width)] for j in range(self.base_env.world.height)] for k in range(Core.NUM_OBJECT_CHANNELS + 1)])
+        map_observation_space = gym.spaces.Box(low=0, high=8, shape=(map_observation_space_array.shape), dtype=np.uint8)
 
         # completed subtasks
         num_tasks = len(self.base_env.run_recipes())
         completed_subtasks_observation = gym.spaces.MultiBinary(num_tasks)
 
+        agent_holding_observation = gym.spaces.MultiBinary(2)
+
+        # TODO combine blockworld and object map 
         self.observation_space = gym.spaces.Dict({
             'blockworld_map': map_observation_space,
-            'object_map': object_observation_space,
-            'completed_subtasks': completed_subtasks_observation
+            'completed_subtasks': completed_subtasks_observation,
+            'agent_is_holding': agent_holding_observation
         })
 
         # Create a Tuple space for the actions
@@ -114,8 +119,8 @@ class OvercookedMultiEnv(SimultaneousEnv):
     def get_observation(self):
         self.base_env.display()
 
-        observation_array_objects =  np.array([[[0 for i in range(self.base_env.world.width)] for j in range(self.base_env.world.height)] for k in range(Core.NUM_OBJECT_CHANNELS)])
-        observation_array_map = np.array([[0 for i in range(self.base_env.world.width)] for j in range(self.base_env.world.height)])
+        observation_array =  np.array([[[0 for i in range(self.base_env.world.width)] for j in range(self.base_env.world.height)] for k in range(Core.NUM_OBJECT_CHANNELS + 1)])
+        # observation_array_map = np.array([[0 for i in range(self.base_env.world.width)] for j in range(self.base_env.world.height)])
 
         objs = []
         for o in self.base_env.world.objects.values():
@@ -125,16 +130,24 @@ class OvercookedMultiEnv(SimultaneousEnv):
             if isinstance(obj, Core.Object):
                 for content in obj.contents:
                     if (isinstance(content, Core.Food)):
-                        observation_array_objects[Core.get_object_channel(content)][x][y]= content.state_index + 1
+                        observation_array[Core.get_object_channel(content) + 1][x][y]= content.state_index + 1
                     else:
-                        observation_array_objects[Core.get_object_channel(content)][x][y] = 1
+                        observation_array[Core.get_object_channel(content) + 1][x][y] = 1
             elif isinstance(obj, Core.GridSquare):
-                observation_array_map[x][y] = obj.get_value()
+                observation_array[0][x][y] = obj.get_value()
+
+        # import pdb; pdb.set_trace()
+
+        # observations = {
+        #     'blockworld_map': observation_array_map.reshape((1,) + observation_array_map.shape),
+        #     'object_map': observation_array_objects.reshape((1,) + observation_array_objects.shape),
+        #     'completed_subtasks': np.array(self.base_env.completed_subtasks)
+        # }
 
         observations = {
-            'blockworld_map': observation_array_map.reshape((1,) + observation_array_map.shape),
-            'object_map': observation_array_objects.reshape((1,) + observation_array_objects.shape),
-            'completed_subtasks': np.array(self.base_env.completed_subtasks)
+            'blockworld_map': observation_array.reshape(observation_array.shape),
+            'completed_subtasks': np.array(self.base_env.completed_subtasks),
+            'agent_is_holding': np.array(((self.base_env.sim_agents[0].holding != None), (self.base_env.sim_agents[1].holding != None)))
         }
 
         # encode next task, when doing rl when observations are the same then the goal is the same
@@ -178,6 +191,11 @@ class OvercookedMultiEnv(SimultaneousEnv):
         reward, done, _ = self.base_env.step(action_dict)
 
         reward -= self.cost_fn()
+        # if (reward != -1):
+        #     print("Reward Value: ", reward)
+
+        print(str(self.base_env))
+        print("Reward Value: ", reward)
 
         return (self.get_observation(), self.get_observation()), (reward, reward), done, {} #info
 
