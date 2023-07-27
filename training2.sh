@@ -7,6 +7,6 @@ levels=("partial-divider_tomato" "open-divider_tomato" "partial-divider_salad" "
 for level in "${levels[@]}"
 do
     echo "Starting $level"
-    python3 trainer.py --env-config "{\"level\": \"$level\", \"num_agents\": 2, \"max_num_timesteps\": 500}" -t 2000000 --log
+    python3 trainer.py --env-config "{\"level\": \"$level\", \"num_agents\": 2, \"max_num_timesteps\": 500}" -t 4000000 --log
     echo "Done with $level"
 done

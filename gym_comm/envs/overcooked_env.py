@@ -90,7 +90,9 @@ class OvercookedMultiEnv(SimultaneousEnv):
 
         # 0 = nothing, 1 = object, 2 = chopped object
         map_observation_space_array = np.array([[[0 for i in range(self.base_env.world.width)] for j in range(self.base_env.world.height)] for k in range(Core.NUM_OBJECT_CHANNELS + 1)])
-        map_observation_space = gym.spaces.Box(low=0, high=8, shape=(map_observation_space_array.shape), dtype=np.uint8)
+        
+        # TODO update if changed
+        map_observation_space = gym.spaces.Box(low=0, high=2, shape=(map_observation_space_array.shape), dtype=np.uint8)
 
         # completed subtasks
         num_tasks = len(self.base_env.run_recipes())
@@ -134,7 +136,8 @@ class OvercookedMultiEnv(SimultaneousEnv):
                     else:
                         observation_array[Core.get_object_channel(content) + 1][x][y] = 1
             elif isinstance(obj, Core.GridSquare):
-                observation_array[0][x][y] = obj.get_value()
+                # observation_array[0][x][y] = obj.get_value()
+                observation_array[0][x][y] = 0
 
         # import pdb; pdb.set_trace()
 
@@ -194,7 +197,7 @@ class OvercookedMultiEnv(SimultaneousEnv):
         if (reward != -1):
             print("Reward Value: ", reward)
 
-        # print(str(self.base_env))
+        print(str(self.base_env))
         # print("Reward Value: ", reward)
 
         return (self.get_observation(), self.get_observation()), (reward, reward), done, {} #info
