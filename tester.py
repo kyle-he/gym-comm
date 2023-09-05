@@ -43,6 +43,10 @@ def create_arglist():
                         default=100,
                         help='Number of episodes to run')
     
+    parser.add_argument('--device', '-d',
+                        default='auto',
+                        help='Device to run pytorch on')
+    
     parser.add_argument('--render',
                         action='store_true',
                         help='Render the environment as it is being run')
@@ -77,13 +81,14 @@ def run_test(ego, env, num_episodes, render=False):
             reward += newreward
             # print("Current Reward: ", newreward)
 
-            # if render:
-            #     env.render()
+            if render:
+                env.render()
                 # sleep(1/60)
 
         rewards.append(reward)
         print("------------------ Episode Complete ------------------")
         print("All Subtasks: ", env.base_env.all_subtasks)
+        print("Completed Subtasks (encoding): ", env.base_env.completed_subtasks)
         print("Completed Subtasks: ")
         for i, complete in enumerate(env.base_env.completed_subtasks):
             if complete == 1:

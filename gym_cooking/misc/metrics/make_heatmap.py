@@ -10,7 +10,7 @@ import sys
 from collections import defaultdict
 import os
 sys.path.append("../..")
-import recipe_planner
+import gym_cooking.recipe_planner.
 import seaborn as sns
 
 # NOTE: THIS SCRIPT IS ONLY WRITTEN FOR 2 AGENTS

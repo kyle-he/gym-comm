@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Declare the 'levels' array without spaces around the equal sign and without single quotes around array elements
-all_levels=("open-divider_salad" "full-divider_salad")
+all_levels=("partial-divider_tomato" "partial-divider_salad" )
 
 for level in "${all_levels[@]}"
 do

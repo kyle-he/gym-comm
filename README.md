@@ -1,4 +1,7 @@
 ## Installation
+
+This installaton requires Python 3.6.
+
 ```
 # Optionally create a conda environment
 conda create --name gym-rl
@@ -17,6 +20,23 @@ cd ..
 # Navigate into gym_cooking and install requirements
 cd gym_cooking
 python3 -m pip install -e .
+```
+
+Update to gymnasium
+```
+pip install gymnasium
+```
+
+Install wandb for logging
+```
+python3 -m pip install wandb==0.15.0
+```
+
+Install imageio, pygame, and ffmpeg
+```
+python3 -m pip install pygame
+python3 -m pip install imageio
+python3 -m pip install imageio[ffmpeg]
 ```
 
 And you should be all set!

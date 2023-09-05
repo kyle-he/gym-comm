@@ -6,9 +6,9 @@ import copy
 import matplotlib.pyplot as plt
 from functools import lru_cache
 
-import recipe_planner.utils as recipe
+import gym_cooking.recipe_planner.utils as recipe
 from navigation_planner.utils import manhattan_dist
-from utils.core import Object, GridSquare, Counter
+from gym_cooking.utils.core import Object, GridSquare, Counter
 
 
 class World:
@@ -96,6 +96,7 @@ class World:
         # plt.figure()
         # nx.draw(self.reachability_graph)
         # plt.show()
+        # plt.savefig('reachabilitygraph.png')
 
     def get_lower_bound_between(self, subtask, agent_locs, A_locs, B_locs):
         """Return distance lower bound between subtask-relevant locations."""
@@ -108,6 +109,25 @@ class World:
                     B_loc=B_loc)
             if bound < lower_bound:
                 lower_bound = bound
+        return lower_bound
+    
+    @lru_cache(maxsize=40000)
+    def get_path_distance_between(self, agent_location, other_location):
+        """Return the shortest path between two locations. If the location can't be reached, then return the perimeter + 1."""
+        lower_bound = self.perimeter + 1
+
+        A = self.get_gridsquare_at(other_location)
+        A_possible_na = [(0, 0)] if not A.collidable else World.NAV_ACTIONS
+
+        for A_na in A_possible_na:
+            try:
+                bound = nx.shortest_path_length(
+                        self.reachability_graph, (agent_location, (0, 0)), (other_location, A_na))
+            except:
+                continue
+            if bound < lower_bound:
+                lower_bound = bound
+
         return lower_bound
 
     @lru_cache(maxsize=40000)

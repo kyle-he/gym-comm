@@ -1,3 +1,8 @@
+# Ignore recordings
+gym_cooking/misc/game/record/
+models/
+wandb/
+
 ## Adapted from: https://github.com/github/gitignore/blob/main/Python.gitignore
 *.swp
 *.pyc
@@ -11,6 +16,7 @@ model/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+*.pyc
 
 # C extensions
 *.so

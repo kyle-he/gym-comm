@@ -1,11 +1,11 @@
 # from environment import OvercookedEnvironment
 # from gym_cooking.envs import OvercookedEnvironment
-from recipe_planner.recipe import *
-from utils.world import World
-from utils.agent import RealAgent, SimAgent, COLORS
-from utils.core import *
-from misc.game.gameplay import GamePlay
-from misc.metrics.metrics_bag import Bag
+from gym_cooking.recipe_planner.recipe import *
+from gym_cooking.utils.world import World
+from gym_cooking.utils.agent import RealAgent, SimAgent, COLORS
+from gym_cooking.utils.core import *
+from gym_cooking.misc.game.gameplay import GamePlay
+from gym_cooking.misc.metrics.metrics_bag import Bag
 
 import numpy as np
 import random

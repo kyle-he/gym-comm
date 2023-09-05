@@ -8,7 +8,7 @@ import itertools
 import pickle
 import sys
 sys.path.append("../..")
-import recipe_planner
+import gym_cooking.recipe_planner.
 
 
 recipes = [

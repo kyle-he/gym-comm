@@ -1,5 +1,5 @@
 # recipe planning
-import recipe_planner.utils as recipe
+import gym_cooking.recipe_planner.utils as recipe
 
 # helpers
 import numpy as np
@@ -34,10 +34,12 @@ class GridSquare:
         self.collidable = True     # cannot go through
         self.dynamic = False       # cannot move around
 
-        self.value = -1           # used for observation
+        self.obs_rep = -1          # used for observation
 
-    def get_value(self):
-        return self.value
+    def get_obs_rep(self):
+        assert self.obs_rep != -1, "Observation representation not set"
+        
+        return self.obs_rep
     
     def __str__(self):
         return color(self.rep, self.color)
@@ -68,7 +70,7 @@ class Floor(GridSquare):
         self.rep = Rep.FLOOR
         self.collidable = False
 
-        self.value = 5
+        self.obs_rep = 0
     def __eq__(self, other):
         return GridSquare.__eq__(self, other)
     def __hash__(self):
@@ -79,7 +81,7 @@ class Counter(GridSquare):
         GridSquare.__init__(self,"Counter", location)
         self.rep = Rep.COUNTER
 
-        self.value = 6
+        self.obs_rep = 1
     def __eq__(self, other):
         return GridSquare.__eq__(self, other)
     def __hash__(self):
@@ -91,7 +93,7 @@ class AgentCounter(Counter):
         self.rep = Rep.COUNTER
         self.collidable = True
 
-        self.value = Rep.COUNTER + 1
+        self.obs_rep = 0
     def __eq__(self, other):
         return Counter.__eq__(self, other)
     def __hash__(self):
@@ -105,7 +107,7 @@ class Cutboard(GridSquare):
         self.rep = Rep.CUTBOARD
         self.collidable = True
 
-        self.value = 7
+        self.obs_rep = 2
     def __eq__(self, other):
         return GridSquare.__eq__(self, other)
     def __hash__(self):
@@ -117,7 +119,7 @@ class Delivery(GridSquare):
         self.rep = Rep.DELIVERY
         self.holding = []
 
-        self.value = 8
+        self.obs_rep = 3
     def acquire(self, obj):
         obj.location = self.location
         self.holding.append(obj)

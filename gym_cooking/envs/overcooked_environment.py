@@ -1,34 +1,35 @@
 # Recipe planning
-from recipe_planner.stripsworld import STRIPSWorld
-import recipe_planner.utils as recipe
-from recipe_planner.recipe import *
+from gym_cooking.recipe_planner.stripsworld import STRIPSWorld
+import gym_cooking.recipe_planner.utils as recipe
+from gym_cooking.recipe_planner.recipe import *
 
 # Delegation planning
-from delegation_planner.bayesian_delegator import BayesianDelegator
+from gym_cooking.delegation_planner.bayesian_delegator import BayesianDelegator
 
 # Navigation planning
-import navigation_planner.utils as nav_utils
+import gym_cooking.navigation_planner.utils as nav_utils
 
 # Other core modules
-from utils.interact import interact
-from utils.world import World
-from utils.core import *
-from utils.agent import SimAgent
-# from misc.game.gameimage import GameImage
-from utils.agent import COLORS
+from gym_cooking.utils.interact import interact
+from gym_cooking.utils.world import World
+from gym_cooking.utils.core import *
+from gym_cooking.utils.agent import SimAgent
+# from gym_cooking.misc.game.gameimage import GameImage
+from gym_cooking.utils.agent import COLORS
 
 import copy
 import networkx as nx
 import numpy as np
 from itertools import combinations, permutations, product
 from collections import namedtuple
+from datetime import datetime
 
 import gym
 from gym import error, spaces, utils
 from gym.utils import seeding
 
 import sys
-
+import wandb
 
 CollisionRepr = namedtuple("CollisionRepr", "time agent_names agent_locations")
 import time
@@ -51,7 +52,7 @@ class OvercookedEnvironment(gym.Env):
 
         self.goal_objects_count = []
         self.completed_subtasks = []
-        
+
         self.reset()
         self.display()
 
@@ -178,6 +179,8 @@ class OvercookedEnvironment(gym.Env):
         self.completed_subtasks = len(self.all_subtasks) * [0]
 
         self.world.make_loc_to_gridsquare()
+        self.world.make_reachability_graph()
+        self.cache_distances()
 
     def close(self):
         return
@@ -197,14 +200,20 @@ class OvercookedEnvironment(gym.Env):
         # Execute.
         self.execute_navigation()
 
+        # Check if done.
+        done = self.done()
+
         # Visualize.
         self.display()
 
-        done = self.done()
         reward = self.reward()
         info = {"t": self.t,
                 "repr_obs": self.rep,
-                "done": done, "termination_info": self.termination_info}
+                "done": done, 
+                "termination_info": self.termination_info,
+                "agent_0_reward_shaping": self.calculate_reward_shaping(self.sim_agents[0]),
+                "agent_1_reward_shaping": self.calculate_reward_shaping(self.sim_agents[1])
+                }
         
         return reward, done, info
 
@@ -236,6 +245,97 @@ class OvercookedEnvironment(gym.Env):
         self.successful = True
 
         return True
+
+    def calculate_reward_shaping(self, agent):        
+        """Returns distance reward for agent under subtask, giving a reward when agents get closer and penalty when they get farther away."""
+        MAX_PATH = self.world.perimeter + 1
+
+        total_penalty = 0
+
+        # First, look at the CHOP subtasks.
+        unchopped_object_distances = []
+        agent_going_for_chop = False
+        min_cutting_board_distance = 0
+        for i, subtask in enumerate(self.all_subtasks):
+            if isinstance(subtask, recipe.Chop):
+                if self.completed_subtasks[i] == 0:
+                    start_obj, goal_obj = nav_utils.get_subtask_obj(subtask=subtask)
+                    subtask_action_obj = nav_utils.get_subtask_action_obj(subtask=subtask)
+
+                    start_object_location = self.world.get_all_object_locs(obj=start_obj)[0]
+                    distance = self.world.get_path_distance_between(agent.location, start_object_location)
+                    unchopped_object_distances.append(
+                        distance
+                    )
+
+                    if distance == 0:
+                        cutting_board_distances = []
+                        for subtask_action_obj_loc in self.world.get_all_object_locs(obj=subtask_action_obj):
+                            distance = self.world.get_path_distance_between(agent.location, subtask_action_obj_loc)
+                            cutting_board_distances.append(
+                                distance
+                            )
+                        min_cutting_board_distance = min(cutting_board_distances)
+
+        if len(unchopped_object_distances) > 0 and not agent_going_for_chop:
+            total_penalty += ((min(unchopped_object_distances) + MAX_PATH) + (len(unchopped_object_distances) - 1) * 2 * MAX_PATH) / MAX_PATH
+        
+        if agent_going_for_chop:
+            total_penalty += (min_cutting_board_distance + (len(unchopped_object_distances) - 1) * 2 * MAX_PATH) / MAX_PATH
+
+        # TODO: ADD MERGE
+        recipe_object_locations = []
+        for i, subtask in enumerate(self.all_subtasks):
+            if isinstance(subtask, recipe.Chop):
+                if self.completed_subtasks[i] == 1:
+                    _, goal_obj = nav_utils.get_subtask_obj(subtask=subtask)
+                    recipe_object_locations.extend((goal_obj.name, x) for x in self.world.get_all_object_locs(obj=goal_obj))
+
+        recipe_object_locations.extend(("plate", x) for x in self.world.get_all_object_locs(obj=Object((None, None), Plate())))
+
+        min_distance = MAX_PATH
+        ingredient_distances = []
+        for pair in combinations(recipe_object_locations, 2):
+            if pair[0][0] != pair[1][0]:
+                distance = self.world.get_path_distance_between(pair[0][1], pair[1][1])
+
+                ingredient_distances.append(distance)
+                # if distance != 0:
+                #     min_distance = min(min_distance, distance)
+        
+        # if total_penalty == 0:
+        # total_penalty += min_distance / MAX_PATH
+
+        total_penalty += sum(ingredient_distances) / (len(ingredient_distances) * MAX_PATH)
+        # else:
+        #     total_penalty += 1
+
+        # Next, look at the DELIVER subtasks.
+        # NOTE: ONLY CAN HANDLE 1 DELIVERY SUBTASK, ALTER IN FUTURE
+        for i, subtask in enumerate(self.all_subtasks):
+            if isinstance(subtask, recipe.Deliver):
+                if self.completed_subtasks[i] == 0:
+                    start_obj, _ = nav_utils.get_subtask_obj(subtask=subtask)
+                    start_object_location = self.world.get_all_object_locs(obj=start_obj)
+                    subtask_action_obj = nav_utils.get_subtask_action_obj(subtask=subtask)
+
+                    if len(start_object_location) == 0:
+                        total_penalty += 2
+                    else:
+                        distance = self.world.get_path_distance_between(agent.location, start_object_location[0])
+                        if distance == 0:
+                            delivery_distances = []
+                            for subtask_action_obj_loc in self.world.get_all_object_locs(obj=subtask_action_obj):
+                                distance = self.world.get_path_distance_between(agent.location, subtask_action_obj_loc)
+                                delivery_distances.append(
+                                    distance
+                                )
+                            min_delivery_distance = min(delivery_distances)
+                            total_penalty += min_delivery_distance / MAX_PATH
+                        else:
+                            total_penalty += distance / MAX_PATH + 1
+
+        return total_penalty
     
     def subtask_reward(self, index, subtask):
         if isinstance(subtask, recipe.Deliver):
@@ -262,10 +362,13 @@ class OvercookedEnvironment(gym.Env):
         for i, subtask in enumerate(self.all_subtasks):
             subtasks_reward = self.subtask_reward(i, subtask)
             reward += subtasks_reward
+
             if (subtasks_reward != 0):
                 self.completed_subtasks[i] = 1
                 print("Completed: ", self.completed_subtasks)
                 print(str(self))
+        
+        # print("==== new frame ====")
         
         return reward
 

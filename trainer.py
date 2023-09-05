@@ -9,10 +9,16 @@ import sys
 import json
 from datetime import datetime
 from gym_comm.extractors.CustomExtractor import CustomCombinedExtractor
+from episode_recorder import EpisodeRecorder
 
 import time
 import csv
 import traceback
+import wandb
+from wandb.integration.sb3 import WandbCallback
+
+from stable_baselines3.common.vec_env import DummyVecEnv
+from vec_normalize import VecNormalize
 
 # TODO This is super hacky, but it works. There are some weird bugs with how gym_comm is imported in relation to gym_cooking, not sure how to fix this. 
 import os
@@ -55,6 +61,11 @@ def create_arglist():
                     type=json.loads,
                     default={},
                     help='Config for the environment')
+
+    parser.add_argument('--hyperparams',
+                       type=json.loads,
+                       default={},
+                       help='Hyperparameters for the training')
     
     # parser.add_argument('--ego-save',
     #                     help='File to save the ego agent into')
@@ -66,10 +77,22 @@ def create_arglist():
                         type=int,
                         default=500000,
                         help='Number of time steps to run (ego perspective)')
+    
+    parser.add_argument('--record-interval',
+                        type=int,
+                        default=-1,
+                        help='Number of episodes to record. -1 to disable')
 
     parser.add_argument('--log',
                     action='store_true',
                     help='Log the run to runs/runlist.csv')
+    
+    parser.add_argument('--notes',
+                        help='Notes to add to the run log')
+
+    parser.add_argument('--wandb',
+                        action='store_true',
+                        help='Log the run to wandb')
     
     return parser.parse_args()
 
@@ -78,13 +101,37 @@ def start_training(args=None):
         features_extractor_class=CustomCombinedExtractor,
     )
 
-    env = gym.make('OvercookedMultiCommEnv-v0', **args.env_config)
-    partner = OnPolicyAgent(PPO('MultiInputPolicy', env, policy_kwargs=policy_kwargs, verbose=1))
+    myenv = gym.make('OvercookedMultiCommEnv-v0', **args.env_config)
+    # myenv = DummyVecEnv([lambda: myenv])  # The lambda function is used to make sure the environment is created in each subprocess
+    # myenv = VecNormalize(venv=myenv, norm_obs_keys=["blockworld_map"])
+
+    env = EpisodeRecorder(env=myenv, record_interval=args.record_interval)
+    partner = OnPolicyAgent(PPO('MultiInputPolicy', env, 
+                                n_steps = args.hyperparams.get('n_steps', 1000*5), 
+                                batch_size=args.hyperparams.get('batch_size', 1000), 
+                                ent_coef=args.hyperparams.get('entrop_coef', 0.01),
+                                use_sde = args.hyperparams.get('sde', False),
+                                learning_rate = args.hyperparams.get('learning_rate', 0.0003), 
+                                policy_kwargs=policy_kwargs, verbose=1))
     env.add_partner_agent(partner)
 
     # Finally, you can construct an ego agent and train it in the environment
-    ego = PPO('MultiInputPolicy', env, policy_kwargs=policy_kwargs, verbose=1)
-    ego.learn(total_timesteps=args.total_timesteps)
+    # TODO update clip range, noise?, maybe increase batch size = 512? or n_steps, adjust n_steps = 300*12
+    ego = PPO('MultiInputPolicy', env, 
+              n_steps = args.hyperparams.get('n_steps', 1000*5), 
+              batch_size=args.hyperparams.get('batch_size', 1000), 
+              ent_coef=args.hyperparams.get('entrop_coef', 0.01), 
+              learning_rate = args.hyperparams.get('learning_rate', 0.0003), 
+              policy_kwargs=policy_kwargs, verbose=1, tensorboard_log="runs")
+    
+    if args.wandb:
+        ego.learn(total_timesteps=args.total_timesteps, callback=WandbCallback(
+            gradient_save_freq=100,
+            model_save_path=f"models/{run.id}",
+            verbose=2,
+        ))
+    else:
+        ego.learn(total_timesteps=args.total_timesteps)
 
     # Get the current time
     current_time = datetime.now()
@@ -103,15 +150,38 @@ def start_training(args=None):
 if __name__ == "__main__":
     args = create_arglist()
     try:
+        if args.wandb:
+            wandb.login()
+            run = wandb.init(
+                # set the wandb project where this run will be logged
+                project="gym_comm",
+
+                name=f"{args.env_config['level']}_{args.total_timesteps}_learningrate_{args.hyperparams.get('learning_rate', 0.0003)}_run_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}",
+                
+                # track hyperparameters and run metadata
+                config={
+                    "level": args.env_config['level'],
+                    "num_agents": args.env_config['num_agents'],
+                    "max_num_timesteps": args.env_config['max_num_timesteps'],
+                    "total_timesteps": args.total_timesteps,
+                },
+
+                sync_tensorboard=True,
+
+                save_code=True
+            )
+
         start_time = time.time()
 
         ego_path, partner_path = start_training(args)
+
+        run.finish()
 
         execution_time = time.time() - start_time
         hours, remainder = divmod(execution_time, 3600)
         minutes, seconds = divmod(remainder, 60)
 
-        log_run(args, ego_path=ego_path, partner_path=partner_path, successful=True, notes=f"Runtime: {int(hours):02d}h {int(minutes):02d}m {seconds:.2f}s")
+        log_run(args, ego_path=ego_path, partner_path=partner_path, successful=True, notes=f"Runtype: {args.notes}, Runtime: {int(hours):02d}h {int(minutes):02d}m {seconds:.2f}s")
     except Exception as error:
         log_run(args, error=error, successful=False)
         print("An error has occured: ")

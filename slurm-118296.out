@@ -1,0 +1,847 @@
+Starting full-divider_salad
+Done with full-divider_salad
+Starting partial-divider_salad
+Done with partial-divider_salad
+Starting open-divider_salad
+Done with open-divider_salad
+Starting full-divider_tomato
+Done with full-divider_tomato
+Starting partial-divider_tomato
+Done with partial-divider_tomato
+Starting open-divider_tomato
+Done with open-divider_tomato
+Starting full-divider_tl
+Done with full-divider_tl
+Starting partial-divider_tl
+Done with partial-divider_tl
+Starting open-divider_tl
+Done with open-divider_tl
+{'blockworld_map': array([[[1, 2, 2, 3, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 1, 0]]]), 'completed_subtasks': array([0, 0, 0, 0, 0, 0, 0, 0, 0]), 'agent_is_holding': array([False, False])}
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+Subtask Other Completed: Chop(Lettuce)
+Completed:  [0, 1, 0, 0, 0, 0, 0, 0, 0]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 1t[0m [37m-[0m 
+[37m/[0m [34m0[0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m/[0m  [0m  [0m [37m-[0m  [0m [35m1[0m [37m-[0m 
+[37m*[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37m-[0m  [0m  [0m [37mp[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37mp[0m [37m-[0m 
+Reward Value:  0
+Subtask Other Completed: Merge(Lettuce, Plate)
+Completed:  [0, 1, 0, 0, 0, 1, 0, 0, 0]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m 1t[0m [37m-[0m [37m-[0m 
+[37m/[0m  [0m  [0m [37m-[0m  [0m [35m1[0m [37m-[0m 
+[37m/[0m  [0m [34m0[0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m*[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37mp[0m [37m-[0m 
+Reward Value:  0
+Subtask Other Completed: Chop(Tomato)
+Completed:  [0, 1, 0, 0, 0, 1, 0, 0, 1]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+[37m/[0m [34m0[0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+2l[0m-[37mp[0m  [0m  [0m [37m-[0m  [0m [35m1[0m [37m-[0m 
+[37m*[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37mp[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+Reward Value:  0
+Subtask Other Completed: Merge(Lettuce, Plate-Tomato)
+Completed:  [0, 1, 0, 1, 0, 1, 0, 0, 1]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+[37m/[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m/[0m [34m0[0m  [0m [37m-[0m  [0m [35m1[0m [37m-[0m 
+[37m*[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37mp[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+Subtask Other Completed: Merge(Tomato, Lettuce-Plate)
+Completed:  [0, 1, 0, 1, 1, 1, 0, 0, 1]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+[37m/[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m/[0m [34m0[0m  [0m [37m-[0m  [0m [35m1[0m [37m-[0m 
+[37m*[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37mp[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+Subtask Other Completed: Merge(Lettuce-Tomato, Plate)
+Completed:  [0, 1, 0, 1, 1, 1, 1, 0, 1]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+[37m/[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m/[0m [34m0[0m  [0m [37m-[0m  [0m [35m1[0m [37m-[0m 
+[37m*[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37mp[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+Reward Value:  2
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 500      |
+|    ep_rew_mean     | -498     |
+| time/              |          |
+|    fps             | 174      |
+|    iterations      | 1        |
+|    time_elapsed    | 11       |
+|    total_timesteps | 2048     |
+---------------------------------
+/home/kyle/.local/lib/python3.6/site-packages/stable_baselines3/common/save_util.py:276: UserWarning: Path 'model/full-divider_salad/2023-07-26_22-01-42' does not exist. Will create it.
+  warnings.warn(f"Path '{path.parent}' does not exist. Will create it.")
+srun: Job 118296 step creation temporarily disabled, retrying
+srun: Job 118296 step creation temporarily disabled, retrying
+srun: Step created for job 118296
+srun: Job 118296 step creation temporarily disabled, retrying
+srun: Job 118296 step creation temporarily disabled, retrying
+srun: Job 118296 step creation temporarily disabled, retrying
+srun: Job 118296 step creation temporarily disabled, retrying
+srun: Job 118296 step creation temporarily disabled, retrying
+srun: Job 118296 step creation temporarily disabled, retrying
+{'blockworld_map': array([[[1, 2, 2, 3, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 1, 0]]]), 'completed_subtasks': array([0, 0, 0, 0, 0, 0, 0, 0, 0]), 'agent_is_holding': array([False, False])}
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+Subtask Other Completed: Chop(Tomato)
+Completed:  [0, 1, 0, 0, 0, 0, 0, 0, 0]
+[37m-[0m [37m-[0m [37m-[0m 1l[0m [37m-[0m [37m-[0m [37m-[0m 
+[37m/[0m  [0m  [0m [34m0[0m  [0m  [0m [37m-[0m 
+[37m/[0m [35m1[0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m*[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m  [0m  [0m  [0m [37mp[0m 
+[37m-[0m  [0m  [0m  [0m  [0m  [0m [37mp[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+Reward Value:  0
+Subtask Other Completed: Chop(Tomato)
+Completed:  [0, 1, 0, 0, 0, 0, 0, 0, 0]
+[37m-[0m [37mp[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+[37m/[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m/[0m [35m1[0m  [0m  [0m  [0m  [0m 1l[0m 
+[37m*[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m [34m0[0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m  [0m  [0m  [0m [37mp[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+Reward Value:  0
+Subtask Other Completed: Merge(Tomato, Plate)
+Completed:  [0, 1, 0, 0, 0, 0, 1, 0, 0]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+[37m/[0m [35m1[0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m/[0m  [0m  [0m  [0m  [0m  [0m 1l[0m 
+[37m*[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m [34m0[0m  [0m  [0m  [0m [37mp[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+Reward Value:  0
+Subtask Other Completed: Chop(Tomato)
+Completed:  [0, 1, 0, 0, 0, 0, 0, 0, 0]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+[37m/[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m/[0m [35m1[0m  [0m [34m0[0m  [0m  [0m [37mp[0m 
+[37m*[0m  [0m  [0m  [0m  [0m  [0m 1l[0m 
+[37m-[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37mp[0m [37m-[0m 
+Reward Value:  0
+Subtask Other Completed: Merge(Tomato, Plate)
+Completed:  [0, 1, 0, 0, 0, 0, 1, 0, 0]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37mp[0m [37m-[0m 
+[37m/[0m  [0m  [0m  [0m [35m1[0m  [0m [37m-[0m 
+[37m/[0m  [0m  [0m  [0m  [0m [34m0[0m [37m-[0m 
+[37m*[0m  [0m  [0m  [0m  [0m  [0m 1l[0m 
+[37m-[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+Reward Value:  0
+Subtask Other Completed: Chop(Lettuce)
+Completed:  [1, 0, 0, 0, 0, 0, 0, 0, 0]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+[37m/[0m [34m0[0m  [0m  [0m  [0m  [0m [37mp[0m 
+[37m/[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m*[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m  [0m [35m1[0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37mp[0m [37m-[0m 
+Reward Value:  0
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 500      |
+|    ep_rew_mean     | -498     |
+| time/              |          |
+|    fps             | 178      |
+|    iterations      | 1        |
+|    time_elapsed    | 11       |
+|    total_timesteps | 2048     |
+---------------------------------
+/home/kyle/.local/lib/python3.6/site-packages/stable_baselines3/common/save_util.py:276: UserWarning: Path 'model/open-divider_salad/2023-07-26_22-02-43' does not exist. Will create it.
+  warnings.warn(f"Path '{path.parent}' does not exist. Will create it.")
+srun: Step created for job 118296
+{'blockworld_map': array([[[1, 2, 2, 3, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 1, 0]]]), 'completed_subtasks': array([0, 0, 0]), 'agent_is_holding': array([False, False])}
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+Subtask Other Completed: Chop(Tomato)
+Completed:  [1, 0, 0]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37mp[0m [37mp[0m [37m-[0m 
+[37m/[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m/[0m [35m1[0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m*[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m [34m0[0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+1l[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+Reward Value:  0
+Subtask Other Completed: Chop(Tomato)
+Completed:  [1, 0, 0]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+[37m/[0m [35m1[0m  [0m 1l[0m  [0m  [0m [37m-[0m 
+[37m/[0m [34m0[0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m*[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37m-[0m  [0m  [0m [37mp[0m 
+[37mp[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+Reward Value:  0
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 500      |
+|    ep_rew_mean     | -500     |
+| time/              |          |
+|    fps             | 198      |
+|    iterations      | 1        |
+|    time_elapsed    | 10       |
+|    total_timesteps | 2048     |
+---------------------------------
+/home/kyle/.local/lib/python3.6/site-packages/stable_baselines3/common/save_util.py:276: UserWarning: Path 'model/partial-divider_tomato/2023-07-26_22-03-37' does not exist. Will create it.
+  warnings.warn(f"Path '{path.parent}' does not exist. Will create it.")
+srun: Step created for job 118296
+{'blockworld_map': array([[[1, 2, 2, 3, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 1, 0]]]), 'completed_subtasks': array([0, 0, 0, 0, 0, 0, 0, 0, 0]), 'agent_is_holding': array([False, False])}
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 500      |
+|    ep_rew_mean     | -500     |
+| time/              |          |
+|    fps             | 169      |
+|    iterations      | 1        |
+|    time_elapsed    | 12       |
+|    total_timesteps | 2048     |
+---------------------------------
+/home/kyle/.local/lib/python3.6/site-packages/stable_baselines3/common/save_util.py:276: UserWarning: Path 'model/partial-divider_salad/2023-07-26_22-04-30' does not exist. Will create it.
+  warnings.warn(f"Path '{path.parent}' does not exist. Will create it.")
+srun: Step created for job 118296
+{'blockworld_map': array([[[1, 2, 2, 3, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 1, 0]]]), 'completed_subtasks': array([0, 0, 0, 0, 0, 0]), 'agent_is_holding': array([False, False])}
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+Subtask Other Completed: Chop(Tomato)
+Completed:  [0, 1, 0, 0, 0, 0]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+[37m/[0m  [0m  [0m [37m-[0m  [0m  [0m 1l[0m 
+[37m/[0m [34m0[0m  [0m [37m-[0m  [0m [35m1[0m [37m-[0m 
+[37m*[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37mp[0m  [0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37mp[0m [37m-[0m 
+Reward Value:  0
+Subtask Other Completed: Merge(Tomato, Plate)
+Completed:  [1, 1, 0, 0, 0, 0]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+[37m/[0m  [0m  [0m 1l[0m  [0m  [0m [37m-[0m 
+[37m/[0m  [0m  [0m [37m-[0m  [0m [35m1[0m [37m-[0m 
+[37m*[0m  [0m  [0m [37mp[0m  [0m  [0m [37m-[0m 
+[37m-[0m [34m0[0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+Reward Value:  0
+Subtask Other Completed: Chop(Lettuce)
+Completed:  [0, 0, 0, 0, 1, 0]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+[37m/[0m [34m0[0m  [0m [37m-[0m [35m1[0m  [0m [37m-[0m 
+[37m/[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m*[0m  [0m  [0m [37m-[0m  [0m  [0m 1t[0m 
+[37m-[0m  [0m  [0m [37m-[0m  [0m  [0m [37mp[0m 
+[37m-[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37mp[0m [37m-[0m 
+Reward Value:  0
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 500      |
+|    ep_rew_mean     | -499     |
+| time/              |          |
+|    fps             | 192      |
+|    iterations      | 1        |
+|    time_elapsed    | 10       |
+|    total_timesteps | 2048     |
+---------------------------------
+/home/kyle/.local/lib/python3.6/site-packages/stable_baselines3/common/save_util.py:276: UserWarning: Path 'model/full-divider_tl/2023-07-26_22-05-24' does not exist. Will create it.
+  warnings.warn(f"Path '{path.parent}' does not exist. Will create it.")
+srun: Step created for job 118296
+{'blockworld_map': array([[[1, 2, 2, 3, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 1, 0]]]), 'completed_subtasks': array([0, 0, 0]), 'agent_is_holding': array([False, False])}
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+Subtask Other Completed: Chop(Tomato)
+Completed:  [0, 1, 0]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+[37m/[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m/[0m [34m0[0m  [0m [37m-[0m  [0m [35m1[0m [37m-[0m 
+[37m*[0m  [0m  [0m [37m-[0m  [0m  [0m 1l[0m 
+[37m-[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37mp[0m  [0m  [0m [37m-[0m 
+[37m-[0m [37mp[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+Reward Value:  0
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 500      |
+|    ep_rew_mean     | -500     |
+| time/              |          |
+|    fps             | 198      |
+|    iterations      | 1        |
+|    time_elapsed    | 10       |
+|    total_timesteps | 2048     |
+---------------------------------
+/home/kyle/.local/lib/python3.6/site-packages/stable_baselines3/common/save_util.py:276: UserWarning: Path 'model/full-divider_tomato/2023-07-26_22-06-18' does not exist. Will create it.
+  warnings.warn(f"Path '{path.parent}' does not exist. Will create it.")
+srun: Step created for job 118296
+{'blockworld_map': array([[[1, 2, 2, 3, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 1, 0]]]), 'completed_subtasks': array([0, 0, 0]), 'agent_is_holding': array([False, False])}
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+Subtask Other Completed: Chop(Tomato)
+Completed:  [0, 0, 1]
+[37m-[0m [37m-[0m [37m-[0m 1l[0m [37m-[0m [37m-[0m [37m-[0m 
+[37m/[0m  [0m  [0m [35m1[0m  [0m  [0m [37m-[0m 
+[37m/[0m [34m0[0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m*[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37mp[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37mp[0m [37m-[0m 
+Reward Value:  0
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 500      |
+|    ep_rew_mean     | -500     |
+| time/              |          |
+|    fps             | 197      |
+|    iterations      | 1        |
+|    time_elapsed    | 10       |
+|    total_timesteps | 2048     |
+---------------------------------
+/home/kyle/.local/lib/python3.6/site-packages/stable_baselines3/common/save_util.py:276: UserWarning: Path 'model/open-divider_tomato/2023-07-26_22-07-11' does not exist. Will create it.
+  warnings.warn(f"Path '{path.parent}' does not exist. Will create it.")
+srun: Step created for job 118296
+{'blockworld_map': array([[[1, 2, 2, 3, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 1, 0]]]), 'completed_subtasks': array([0, 0, 0, 0, 0, 0]), 'agent_is_holding': array([False, False])}
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+Subtask Other Completed: Chop(Lettuce)
+Completed:  [0, 0, 0, 0, 1, 0]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 1t[0m [37m-[0m 
+[37m/[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m/[0m [35m1[0m  [0m [37mp[0m  [0m  [0m [37m-[0m 
+[37m*[0m  [0m  [0m [37m-[0m [34m0[0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37mp[0m [37m-[0m [37m-[0m [37m-[0m 
+Reward Value:  0
+Subtask Other Completed: Chop(Tomato)
+Completed:  [1, 0, 0, 0, 0, 0]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 1l[0m [37m-[0m 
+[37m/[0m  [0m  [0m [37mp[0m  [0m  [0m [37m-[0m 
+[37m/[0m [35m1[0m  [0m [37m-[0m  [0m  [0m [37mp[0m 
+[37m*[0m  [0m [34m0[0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+Reward Value:  0
+Subtask Other Completed: Chop(Lettuce)
+Completed:  [0, 0, 0, 0, 1, 0]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 1t[0m [37m-[0m 
+[37m/[0m  [0m [35m1[0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m/[0m [34m0[0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m*[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m [37m-[0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37mp[0m [37mp[0m [37m-[0m 
+Reward Value:  0
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 500      |
+|    ep_rew_mean     | -499     |
+| time/              |          |
+|    fps             | 194      |
+|    iterations      | 1        |
+|    time_elapsed    | 10       |
+|    total_timesteps | 2048     |
+---------------------------------
+/home/kyle/.local/lib/python3.6/site-packages/stable_baselines3/common/save_util.py:276: UserWarning: Path 'model/partial-divider_tl/2023-07-26_22-08-05' does not exist. Will create it.
+  warnings.warn(f"Path '{path.parent}' does not exist. Will create it.")
+srun: Step created for job 118296
+{'blockworld_map': array([[[1, 2, 2, 3, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]],
+
+       [[0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 1, 0]]]), 'completed_subtasks': array([0, 0, 0, 0, 0, 0]), 'agent_is_holding': array([False, False])}
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+Using cuda device
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+Subtask Other Completed: Chop(Lettuce)
+Completed:  [0, 0, 0, 0, 1, 0]
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m [37m-[0m 
+[37m/[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m/[0m [35m1[0m  [0m  [0m [34m0[0m  [0m [37m-[0m 
+[37m*[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m  [0m  [0m  [0m  [0m  [0m 1t[0m 
+[37m-[0m  [0m  [0m  [0m  [0m  [0m [37m-[0m 
+[37m-[0m [37m-[0m [37m-[0m [37m-[0m [37mp[0m [37m-[0m [37m-[0m 
+Reward Value:  0
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 500      |
+|    ep_rew_mean     | -500     |
+| time/              |          |
+|    fps             | 193      |
+|    iterations      | 1        |
+|    time_elapsed    | 10       |
+|    total_timesteps | 2048     |
+---------------------------------
+/home/kyle/.local/lib/python3.6/site-packages/stable_baselines3/common/save_util.py:276: UserWarning: Path 'model/open-divider_tl/2023-07-26_22-08-59' does not exist. Will create it.
+  warnings.warn(f"Path '{path.parent}' does not exist. Will create it.")
