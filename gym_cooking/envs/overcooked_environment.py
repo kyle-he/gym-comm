@@ -284,31 +284,54 @@ class OvercookedEnvironment(gym.Env):
             total_penalty += (min_cutting_board_distance + (len(unchopped_object_distances) - 1) * 2 * MAX_PATH) / MAX_PATH
 
         # TODO: ADD MERGE
-        recipe_object_locations = []
-        for i, subtask in enumerate(self.all_subtasks):
-            if isinstance(subtask, recipe.Chop):
-                if self.completed_subtasks[i] == 1:
-                    _, goal_obj = nav_utils.get_subtask_obj(subtask=subtask)
-                    recipe_object_locations.extend((goal_obj.name, x) for x in self.world.get_all_object_locs(obj=goal_obj))
+        # recipe_object_locations = []
+        # for i, subtask in enumerate(self.all_subtasks):
+        #     if isinstance(subtask, recipe.Chop):
+        #         _, goal_obj = nav_utils.get_subtask_obj(subtask=subtask)
+        #         if self.completed_subtasks[i] == 1:
+        #             recipe_object_locations.extend((goal_obj.name, x) for x in self.world.get_all_object_locs(obj=goal_obj))
+        #         else:
+        #             recipe_object_locations.append((goal_obj.name, None))
 
-        recipe_object_locations.extend(("plate", x) for x in self.world.get_all_object_locs(obj=Object((None, None), Plate())))
+        recipe_items = []
+        recipe_items.append(Plate())
+        recipe_items.extend(self.recipes[0].contents)
 
-        min_distance = MAX_PATH
-        ingredient_distances = []
-        for pair in combinations(recipe_object_locations, 2):
-            if pair[0][0] != pair[1][0]:
-                distance = self.world.get_path_distance_between(pair[0][1], pair[1][1])
+        recipe_object_locations = {}
+        for ingredient in recipe_items:
+            recipe_object_locations[ingredient.name] = []
 
-                ingredient_distances.append(distance)
-                # if distance != 0:
-                #     min_distance = min(min_distance, distance)
-        
-        # if total_penalty == 0:
-        # total_penalty += min_distance / MAX_PATH
+        objs = []
+        for o in self.world.objects.values():
+            objs += o
+        for obj in objs:
+            if isinstance(obj, Object):
+                for content in obj.contents:
+                    if content in recipe_items:
+                        recipe_object_locations[content.name].append(obj.location)
 
-        total_penalty += sum(ingredient_distances) / (len(ingredient_distances) * MAX_PATH)
-        # else:
-        #     total_penalty += 1
+        distance_pairs = []
+        for item1, item2 in combinations(recipe_object_locations.keys(), 2):
+            item1_locs = recipe_object_locations[item1]
+            item2_locs = recipe_object_locations[item2]
+
+            if len(item1_locs) > 0 and len(item2_locs) > 0:
+                min_distance = MAX_PATH
+                for loc_1 in item1_locs:
+                    for loc_2 in item2_locs:
+                        distance = self.world.get_path_distance_between(loc_1, loc_2)
+                        min_distance = min(min_distance, distance)
+
+                if (min_distance != 0):
+                    distance_pairs.append(min_distance)
+                # total_distance += min_distance
+                # num_distances += 1
+            else:
+                distance_pairs.append(MAX_PATH)
+
+        # import pdb; pdb.set_trace()
+        if (len(distance_pairs) > 0):
+            total_penalty += (min(distance_pairs) + (len(distance_pairs) - 1) * MAX_PATH) / MAX_PATH
 
         # Next, look at the DELIVER subtasks.
         # NOTE: ONLY CAN HANDLE 1 DELIVERY SUBTASK, ALTER IN FUTURE

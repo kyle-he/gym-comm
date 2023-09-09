@@ -5,7 +5,7 @@ from pantheonrl.common.multiagentenv import SimultaneousEnv
 # from gym_cooking.envs.overcooked_environment import OvercookedEnv
 from gym_cooking.envs import OvercookedEnvironment
 from gym_cooking.utils.world import World
-import utils.core as Core
+import gym_cooking.utils.core as Core
 import numpy as np
 import re
 import time
@@ -91,10 +91,10 @@ class OvercookedMultiEnv(SimultaneousEnv):
         # map_observation_space = gym.spaces.Box(low=0, high=8, shape=(observation_space_array.shape), dtype=observation_space_array.dtype)
 
         # 0 = nothing, 1 = object, 2 = chopped object
-        map_observation_space_array = np.array([[[0 for i in range(self.base_env.world.width)] for j in range(self.base_env.world.height)] for k in range(Core.NUM_OBJECT_CHANNELS + 2)])
+        map_observation_space_array = np.array([[[0 for i in range(self.base_env.world.width)] for j in range(self.base_env.world.height)] for k in range(Core.NUM_OBJECT_CHANNELS + 3)])
         
         # TODO update if changed
-        map_observation_space = gym.spaces.Box(low=0, high=2, shape=(map_observation_space_array.shape), dtype=np.int8)
+        map_observation_space = gym.spaces.Box(low=-1, high=8, shape=(map_observation_space_array.shape), dtype=np.int8)
 
         agent_location_observation_space = gym.spaces.Box(low=np.array([0, 0]), high=np.array([self.base_env.world.width - 1, self.base_env.world.height - 1]), dtype=np.float32)
 
@@ -115,20 +115,6 @@ class OvercookedMultiEnv(SimultaneousEnv):
             'agent_is_holding': agent_holding_observation
         })
 
-        # type 2
-        # self.observation_space = gym.spaces.Dict({
-        #     'blockworld_map': map_observation_space,
-        #     'completed_subtasks': completed_subtasks_observation,
-        # })
-
-        # type 3
-        # self.observation_space = gym.spaces.Dict({
-        #     'blockworld_map': map_observation_space,
-        #     'completed_subtasks': completed_subtasks_observation,
-        #     'agent1_location': agent_location_observation_space,
-        #     'agent2_location': agent_location_observation_space,
-        # })
-
         # Create a Tuple space for the actions
         self.lA = len(World.NAV_ACTIONS)
         self.action_space = gym.spaces.Discrete(self.lA)
@@ -146,9 +132,7 @@ class OvercookedMultiEnv(SimultaneousEnv):
     def get_observation(self):
         self.base_env.display()
 
-        observation_array =  np.array([[[0 for i in range(self.base_env.world.width)] for j in range(self.base_env.world.height)] for k in range(Core.NUM_OBJECT_CHANNELS + 2)])
-        # observation_array_map = np.array([[0 for i in range(self.base_env.world.width)] for j in range(self.base_env.world.height)])
-
+        observation_array =  np.array([[[0 for i in range(self.base_env.world.width)] for j in range(self.base_env.world.height)] for k in range(Core.NUM_OBJECT_CHANNELS + 3)])
         objs = []
         for o in self.base_env.world.objects.values():
             objs += o
@@ -157,54 +141,23 @@ class OvercookedMultiEnv(SimultaneousEnv):
             if isinstance(obj, Core.Object):
                 for content in obj.contents:
                     if (isinstance(content, Core.Food)):
-                        observation_array[Core.get_object_channel(content) + 2][x][y]= content.state_index + 1
+                        observation_array[Core.get_object_channel(content) + 3][x][y]= content.state_index + 1
                     else:
-                        observation_array[Core.get_object_channel(content) + 2][x][y] = 1
-            # elif isinstance(obj, Core.GridSquare):
-            #     observation_array[0][x][y] = obj.get_obs_rep()
+                        observation_array[Core.get_object_channel(content) + 3][x][y] = 1
+            elif isinstance(obj, Core.GridSquare):
+                observation_array[0][x][y] = obj.get_obs_rep()
         
         # encode agent locations
         for i, agent in enumerate(self.base_env.sim_agents):
             x, y = agent.location
-            observation_array[i][x][y] = 1
+            observation_array[i + 1][x][y] = 1
 
-        # for i, agent in enumerate(self.base_env.sim_agents):
-        #     x, y = agent.location
-        #     observation_array[0][x][y] = i + 1
-
-        # import pdb; pdb.set_trace()
-
-        # TODO update observations
-
-        # observation type 1: high dimensionality
         observations = {
             'blockworld_map': observation_array.reshape(observation_array.shape),
             'completed_subtasks': np.array(self.base_env.completed_subtasks),
-            # 'agent1_location': np.array(agent.location),
-            # 'agent2_location': np.array(agent.location),
             'agent_is_holding': np.array(((self.base_env.sim_agents[0].holding != None), (self.base_env.sim_agents[1].holding != None)))
         }
 
-        # observation type 2: low dimensionality
-        # observations = {
-        #     'blockworld_map': observation_array.reshape(observation_array.shape),
-        #     'completed_subtasks': np.array(self.base_env.completed_subtasks),
-        # }
-
-        # observation type 3: location help
-        # observations = {
-        #     'blockworld_map': observation_array.reshape(observation_array.shape),
-        #     'completed_subtasks': np.array(self.base_env.completed_subtasks),
-        #     'agent1_location': np.array(agent.location),
-        #     'agent2_location': np.array(agent.location),
-        # }
-
-        # encode next task, when doing rl when observations are the same then the goal is the same
-        # add finished taskID to observation once its done
-        # show that agent is holding and item 
-
-        # print(observation_array)
-        # print(shape)
         return observations
     
     def get_partial_observability_FOW(self, agent_idx, radius=2):
@@ -213,9 +166,7 @@ class OvercookedMultiEnv(SimultaneousEnv):
         """
         self.base_env.display()
 
-        observation_array =  np.array([[[0 for i in range(self.base_env.world.width)] for j in range(self.base_env.world.height)] for k in range(Core.NUM_OBJECT_CHANNELS + 2)])
-        # observation_array_map = np.array([[0 for i in range(self.base_env.world.width)] for j in range(self.base_env.world.height)])
-
+        observation_array =  np.array([[[0 for i in range(self.base_env.world.width)] for j in range(self.base_env.world.height)] for k in range(Core.NUM_OBJECT_CHANNELS + 3)])
         objs = []
         for o in self.base_env.world.objects.values():
             objs += o
@@ -224,9 +175,16 @@ class OvercookedMultiEnv(SimultaneousEnv):
             if isinstance(obj, Core.Object):
                 for content in obj.contents:
                     if (isinstance(content, Core.Food)):
-                        observation_array[Core.get_object_channel(content) + 2][x][y]= content.state_index + 1
+                        observation_array[Core.get_object_channel(content) + 3][x][y]= content.state_index + 1
                     else:
-                        observation_array[Core.get_object_channel(content) + 2][x][y] = 1
+                        observation_array[Core.get_object_channel(content) + 3][x][y] = 1
+            elif isinstance(obj, Core.GridSquare):
+                observation_array[0][x][y] = obj.get_obs_rep()
+        
+        # encode agent locations
+        for i, agent in enumerate(self.base_env.sim_agents):
+            x, y = agent.location
+            observation_array[i + 1][x][y] = 1
 
         for x in range(self.base_env.world.width):
             for y in range(self.base_env.world.height):
@@ -234,19 +192,12 @@ class OvercookedMultiEnv(SimultaneousEnv):
                 distance = abs(x - agent_x) + abs(y - agent_y)
 
                 if distance > radius:
-                    for k in range(Core.NUM_OBJECT_CHANNELS + 2):
+                    for k in range(Core.NUM_OBJECT_CHANNELS + 3):
                         observation_array[k][x][y] = -1
-        
-        for i, agent in enumerate(self.base_env.sim_agents):
-            x, y = agent.location
-            observation_array[1][x][y] = i + 1
 
-        # observation type 1: high dimensionality
         observations = {
             'blockworld_map': observation_array.reshape(observation_array.shape),
             'completed_subtasks': np.array(self.base_env.completed_subtasks),
-            'agent1_location': np.array(self.base_env.sim_agents[0].location),
-            'agent2_location': np.array(self.base_env.sim_agents[1].location),
             'agent_is_holding': np.array(((self.base_env.sim_agents[0].holding != None), (self.base_env.sim_agents[1].holding != None)))
         }
 
@@ -294,7 +245,11 @@ class OvercookedMultiEnv(SimultaneousEnv):
 
         # shared_reward = reward - info["agent_0_reward_shaping"] - info["agent_1_reward_shaping"]
 
-        return ((self.get_observation(), self.get_observation()), (reward - info["agent_0_reward_shaping"], reward - info["agent_1_reward_shaping"]), done, {}) #info
+        # print(self.get_partial_observability_FOW(0))
+        # print(self.get_partial_observability_FOW(1))
+        # import pdb; pdb.set_trace()
+
+        return ((self.get_partial_observability_FOW(0), self.get_partial_observability_FOW(1)), (reward - info["agent_0_reward_shaping"], reward - info["agent_1_reward_shaping"]), done, {}) #info
 
         # return ((self.get_partial_observability_FOW(0), self.get_partial_observability_FOW(1)), (reward, reward), done, {}) #info
 
