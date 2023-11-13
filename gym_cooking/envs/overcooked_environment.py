@@ -146,13 +146,29 @@ class OvercookedEnvironment(gym.Env):
                         #         id_color=COLORS[len(self.sim_agents)],
                         #         location=(int(loc[0]), int(loc[1])))
                         self.sim_agents.append(sim_agent)
+                
+                elif phase == 4:
+                    # import pdb; pdb.set_trace()                    
+                    occupied = set()
+                    for rep in line:
+                        # check if the object is a tomato, lettuce, onion, or plate
+                        if rep in "tlop":
+                            while True:
+                                obj_counter = random.choice(self.world.objects["Counter"])
+                                if (obj_counter.location not in occupied):
+                                    occupied.add(obj_counter.location)
+                                    break
+
+                            obj = Object(
+                                        location=obj_counter.location,
+                                        contents=RepToClass[rep]())
+                            self.world.insert(obj=obj)
+                            obj_counter.acquire(obj=obj)
 
         self.distances = {}
         self.world.width = x+1
         self.world.height = y
         self.world.perimeter = 2*(self.world.width + self.world.height)
-        
-        # print(self.rep)
 
     def reset(self):
         self.world = World(arglist=self.arglist)
@@ -294,12 +310,12 @@ class OvercookedEnvironment(gym.Env):
         #             recipe_object_locations.append((goal_obj.name, None))
 
         recipe_items = []
-        recipe_items.append(Plate())
-        recipe_items.extend(self.recipes[0].contents)
+        recipe_items.append(Plate().name)
+        recipe_items.extend([r.name for r in self.recipes[0].contents])
 
         recipe_object_locations = {}
         for ingredient in recipe_items:
-            recipe_object_locations[ingredient.name] = []
+            recipe_object_locations[ingredient] = []
 
         objs = []
         for o in self.world.objects.values():
@@ -307,8 +323,11 @@ class OvercookedEnvironment(gym.Env):
         for obj in objs:
             if isinstance(obj, Object):
                 for content in obj.contents:
-                    if content in recipe_items:
-                        recipe_object_locations[content.name].append(obj.location)
+                    if content.name in recipe_items:
+                        try: 
+                            recipe_object_locations[content.name].append(obj.location)
+                        except:
+                            import pdb; pdb.set_trace()
 
         distance_pairs = []
         for item1, item2 in combinations(recipe_object_locations.keys(), 2):
@@ -331,7 +350,10 @@ class OvercookedEnvironment(gym.Env):
 
         # import pdb; pdb.set_trace()
         if (len(distance_pairs) > 0):
-            total_penalty += (min(distance_pairs) + (len(distance_pairs) - 1) * MAX_PATH) / MAX_PATH
+            if (total_penalty == 0):
+                total_penalty += (min(distance_pairs) + (len(distance_pairs) - 1) * MAX_PATH) / MAX_PATH
+            else:
+                total_penalty += (len(distance_pairs) * MAX_PATH) / MAX_PATH
 
         # Next, look at the DELIVER subtasks.
         # NOTE: ONLY CAN HANDLE 1 DELIVERY SUBTASK, ALTER IN FUTURE

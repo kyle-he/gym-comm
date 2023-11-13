@@ -8,7 +8,7 @@ import argparse
 import sys
 import json
 from datetime import datetime
-from gym_comm.extractors.CustomExtractor import CustomCombinedExtractor
+from gym_comm.extractors.CustomExtractor import CustomCombinedExtractor, FlattenedDictExtractor
 from episode_recorder import EpisodeRecorder
 
 import time
@@ -110,6 +110,7 @@ def start_training(args=None):
                                 n_steps = args.hyperparams.get('n_steps', 1000*5), 
                                 batch_size=args.hyperparams.get('batch_size', 1000), 
                                 ent_coef=args.hyperparams.get('entrop_coef', 0.01),
+                                clip_range=args.hyperparams.get('clip_range', 0.05),
                                 use_sde = args.hyperparams.get('sde', False),
                                 learning_rate = args.hyperparams.get('learning_rate', 0.0003), 
                                 policy_kwargs=policy_kwargs, verbose=1))
@@ -121,6 +122,7 @@ def start_training(args=None):
               n_steps = args.hyperparams.get('n_steps', 1000*5), 
               batch_size=args.hyperparams.get('batch_size', 1000), 
               ent_coef=args.hyperparams.get('entrop_coef', 0.01), 
+              clip_range=args.hyperparams.get('clip_range', 0.05),
               learning_rate = args.hyperparams.get('learning_rate', 0.0003), 
               policy_kwargs=policy_kwargs, verbose=1, tensorboard_log="runs")
     

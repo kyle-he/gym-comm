@@ -25,6 +25,8 @@ class EpisodeRecorder(gym.Wrapper):
         return observation, reward, done, info
 
     def reset(self, **kwargs):
+        wandb.log({"num_completed_subtasks": sum(self.env.base_env.completed_subtasks)}, step=self.episode_count)
+        
         super_return = super(EpisodeRecorder, self).reset(**kwargs)
 
         self.episode_count += 1
