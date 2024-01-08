@@ -52,7 +52,7 @@ def create_arglist(args=None):
         return parser.parse_args()
 
 class OvercookedMultiEnv(SimultaneousEnv):
-    def __init__(self, level, num_agents, max_num_timesteps, ego_agent_idx=0, baselines=False):
+    def __init__(self, level, num_agents, max_num_timesteps, ego_agent_idx=0, baselines=False, num_communication=5):
         """
         base_env: OvercookedEnv
         featurize_fn: what function is used to featurize states returned in the 'both_agent_obs' field
@@ -134,12 +134,24 @@ class OvercookedMultiEnv(SimultaneousEnv):
             'completed_subtasks': completed_subtasks_observation,
             'agent1_location': agent_location_observation_space,
             'agent2_location': agent_location_observation_space,
-            'agent_is_holding': agent_holding_observation
+            'agent_is_holding': agent_holding_observation, 
+            'agent1_comm': gym.spaces.MultiBinary(num_communication),
+            'agent2_comm': gym.spaces.MultiBinary(num_communication)
         })
 
         # Create a Tuple space for the actions
         self.lA = len(World.NAV_ACTIONS)
-        self.action_space = gym.spaces.Discrete(self.lA)
+        # self.action_space = gym.spaces.Discrete(self.lA)
+
+        # let's use a multi-discrete space for communication
+        self.action_space = gym.spaces.MultiDiscrete([self.lA, num_communication])
+
+        self.num_communication = num_communication
+        no_comm = np.zeros(self.num_communication)
+        no_comm[0] = 1
+        self.per_agent_communications = [no_comm for _ in range(num_agents)]
+
+
 
         # self.action_space  = gym.spaces.Discrete( self.lA )
         self.ego_agent_idx = ego_agent_idx
@@ -198,7 +210,10 @@ class OvercookedMultiEnv(SimultaneousEnv):
             'completed_subtasks': np.array(self.base_env.completed_subtasks),
             'agent1_location': np.array(self.base_env.sim_agents[0].location),
             'agent2_location': np.array(self.base_env.sim_agents[1].location),
-            'agent_is_holding': np.array(((self.base_env.sim_agents[0].holding != None), (self.base_env.sim_agents[1].holding != None)))
+            'agent_is_holding': np.array(((self.base_env.sim_agents[0].holding != None), (self.base_env.sim_agents[1].holding != None))),
+            'agent1_comm': np.array(self.per_agent_communications[0]),
+            'agent2_comm': np.array(self.per_agent_communications[1])
+
         }
 
         return observations
@@ -241,7 +256,9 @@ class OvercookedMultiEnv(SimultaneousEnv):
         observations = {
             'blockworld_map': observation_array,
             'completed_subtasks': np.array(self.base_env.completed_subtasks),
-            'agent_is_holding': np.array(((self.base_env.sim_agents[0].holding != None), (self.base_env.sim_agents[1].holding != None)))
+            'agent_is_holding': np.array(((self.base_env.sim_agents[0].holding != None), (self.base_env.sim_agents[1].holding != None))),
+            'agent1_comm': np.array(self.per_agent_communications[0]),
+            'agent2_comm': np.array(self.per_agent_communications[1])
         }
 
         return observations
@@ -304,12 +321,28 @@ class OvercookedMultiEnv(SimultaneousEnv):
         returns:
             observation: formatted to be standard input for self.agent_idx's policy
         """
-        ego_action, alt_action = World.NAV_ACTIONS[ego_action], World.NAV_ACTIONS[alt_action]
         # also add potential communication action that adds to ego observation (tell the ego action)
 
         # use series of maps? 
 
         action_dict = {}
+        ego_action, ego_communication = ego_action
+        alt_action, alt_communication = alt_action
+
+        # print("EGO COMMUNICATION: ", ego_communication)
+        # print("ALT COMMUNICATION: ", alt_communication)
+
+        # let's convert this into a one-hot vector
+        ego_communication = np.zeros(self.num_communication)
+        ego_communication[ego_action] = 1
+
+        alt_communication = np.zeros(self.num_communication)
+
+        self.per_agent_communications[0] = ego_communication
+        self.per_agent_communications[1] = alt_communication
+
+
+        ego_action, alt_action = World.NAV_ACTIONS[ego_action], World.NAV_ACTIONS[alt_action]
         
         if self.ego_agent_idx == 0:
             action_dict["agent-0"] = ego_action 
