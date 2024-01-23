@@ -9,7 +9,7 @@ import sys
 import json
 from datetime import datetime
 from gym_comm.extractors.CustomExtractor import CustomCombinedExtractor, FlattenedDictExtractor
-from episode_recorder import EpisodeRecorder
+from episode_recorder import EpisodeRecorder, ParallelEpisodeRecorder
 
 import time
 import csv
@@ -18,6 +18,7 @@ import wandb
 from wandb.integration.sb3 import WandbCallback
 
 from stable_baselines3.common.vec_env import DummyVecEnv
+from stable_baselines3.common.env_util import make_vec_env
 from vec_normalize import VecNormalize
 
 # TODO This is super hacky, but it works. There are some weird bugs with how gym_comm is imported in relation to gym_cooking, not sure how to fix this. 
@@ -97,15 +98,22 @@ def create_arglist():
     return parser.parse_args()
 
 def start_training(args=None):
+    # policy_kwargs = dict(
+    #     features_extractor_class=CustomCombinedExtractor,
+    # )
+
     policy_kwargs = dict(
-        features_extractor_class=CustomCombinedExtractor,
+        features_extractor_class=FlattenedDictExtractor
     )
 
-    myenv = gym.make('OvercookedMultiCommEnv-v0', **args.env_config)
+    def make_overcooked_env():
+        return EpisodeRecorder(env=gym.make('OvercookedMultiCommEnv-v0', **args.env_config), record_interval=args.record_interval)
+    
+    # myenv = make_vec_env(make_overcooked_env, n_envs=4)
     # myenv = DummyVecEnv([lambda: myenv])  # The lambda function is used to make sure the environment is created in each subprocess
     # myenv = VecNormalize(venv=myenv, norm_obs_keys=["blockworld_map"])
 
-    env = EpisodeRecorder(env=myenv, record_interval=args.record_interval)
+    env = EpisodeRecorder(env=gym.make('OvercookedMultiCommEnv-v0', **args.env_config), record_interval=args.record_interval)
     partner = OnPolicyAgent(PPO('MultiInputPolicy', env, 
                                 n_steps = args.hyperparams.get('n_steps', 1000*5), 
                                 batch_size=args.hyperparams.get('batch_size', 1000), 
@@ -114,6 +122,8 @@ def start_training(args=None):
                                 use_sde = args.hyperparams.get('sde', False),
                                 learning_rate = args.hyperparams.get('learning_rate', 0.0003), 
                                 policy_kwargs=policy_kwargs, verbose=1))
+
+    # for env in env.envs:
     env.add_partner_agent(partner)
 
     # Finally, you can construct an ego agent and train it in the environment
@@ -139,7 +149,7 @@ def start_training(args=None):
     current_time = datetime.now()
 
     # Format the current time for file name
-    formatted_time = current_time.strftime("%Y-%m-%d_%H-%M-%S") 
+    formatted_time = current_time.strftime("%Y-%m-%d_%H-%M-%S")
 
     ego_path = f"model/{args.env_config['level']}/{formatted_time}/ppo_ego"
     partner_path = f"model/{args.env_config['level']}/{formatted_time}/ppo_partner1"

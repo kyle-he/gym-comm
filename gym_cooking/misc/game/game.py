@@ -74,10 +74,12 @@ class Game:
         for agent in self.sim_agents:
             self.draw_agent(agent)
 
+        # draw communication
+        
+
         if self.play:
             pygame.display.flip()
             pygame.display.update()
-
 
     def draw_gridsquare(self, gs):
         sl = self.scaled_location(gs.location)
@@ -102,7 +104,6 @@ class Game:
         image_path = '{}/{}.png'.format(graphics_dir, path)
         image = pygame.transform.scale(get_image(image_path), size)
         self.screen.blit(image, location)
-
 
     def draw_agent(self, agent):
         self.draw('agent-{}'.format(agent.color),

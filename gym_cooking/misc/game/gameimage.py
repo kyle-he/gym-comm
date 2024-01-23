@@ -38,10 +38,19 @@ class GameImage(Game):
                 img_rgb[j, i, 1] = color.b
                 img_rgb[j, i, 2] = color.r
         return img_rgb
+    
+    def display_text(self, lines):
+        font = pygame.font.Font(None, 38)
+        y_position = 10
+        for line in lines:
+            text_surface = font.render(line, True, (0, 0, 0))
+            self.screen.blit(text_surface, (10, y_position))
+            y_position += 30
 
-    def save_image_obs(self, t):
+    def save_image_obs(self, t, text):
         self.on_render()
         image_path = '{}/t={:03d}.png'.format(self.game_record_dir, t)
+        self.display_text(text)
         pygame.image.save(self.screen, image_path)
         self.image_paths.append(image_path)
     
