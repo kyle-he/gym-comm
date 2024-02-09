@@ -12,7 +12,7 @@ import time
 
 import sys
 
-COMMUNICATION_ON = True
+COMMUNICATION_ON = False
 EGO_LED = False
 FOW_RADIUS = 2
 
@@ -133,6 +133,7 @@ class OvercookedMultiEnv(SimultaneousEnv):
         object_state_space = gym.spaces.MultiBinary(4)
 
         self.observation_space = gym.spaces.Dict({
+            'timestep': gym.spaces.Box(low=0.0, high=1.0, shape=(1,), dtype=np.float32),
             'object_encodings_x': flattened_object_encoding_space_x,
             'object_encodings_y': flattened_object_encoding_space_y,
             'state_encodings': object_state_space,
@@ -220,6 +221,7 @@ class OvercookedMultiEnv(SimultaneousEnv):
         #         agent_is_holding.append(-1)
 
         observations = {
+            "timestep": np.array((self.base_env.t / self.base_env.arglist.max_num_timesteps, )),
             'object_encodings_x': np.array(x_distances),
             'object_encodings_y': np.array(y_distances),
             'state_encodings': np.array(object_states),
@@ -227,7 +229,7 @@ class OvercookedMultiEnv(SimultaneousEnv):
             'completed_subtasks': np.array(self.base_env.completed_subtasks),
             'agent1_location': np.array(self.base_env.sim_agents[0].location),
             'agent2_location': np.array(self.base_env.sim_agents[1].location),
-            'agent_is_holding': np.array(self.base_env.sim_agents[agent_idx].holding != None, 0),
+            'agent_is_holding': np.array((self.base_env.sim_agents[agent_idx].holding != None, False)),
             'agent1_comm': np.array(self.per_agent_communications[0]),
             'agent2_comm': np.array(self.per_agent_communications[1])
         }
