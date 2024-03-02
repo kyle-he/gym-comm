@@ -19,7 +19,12 @@ from wandb.integration.sb3 import WandbCallback
 
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.env_util import make_vec_env
-from vec_normalize import VecNormalize
+
+from arglist import create_arglist
+
+import os
+import shutil
+import json
 
 # TODO This is super hacky, but it works. There are some weird bugs with how gym_comm is imported in relation to gym_cooking, not sure how to fix this. 
 import os
@@ -28,92 +33,59 @@ relative_path = os.path.join(current_dir, 'gym_cooking')
 sys.path.append(relative_path)
 # =============================
 
-def log_run(args, ego_path=None, partner_path=None, error=None, successful=True, notes="None"):
-    if not args.log:
-        return
+# def log_run(args, ego_path=None, partner_path=None, error=None, successful=True, notes="None"):
+#     if not args.log:
+#         return
 
-    with open('runs/runlist.csv', 'a', newline='') as file:
-        writer = csv.writer(file)
+#     with open('runs/runlist.csv', 'a', newline='') as file:
+#         writer = csv.writer(file)
 
-        headers = ['time', 'level', 'run_status', 'error', 'tester_command', 'num_agents', 'max_num_timesteps', 'total_timesteps', 'ego_location', 'alt_location', 'notes']
-        if file.tell() == 0:
-            writer.writerow(headers)
+#         headers = ['time', 'level', 'run_status', 'error', 'tester_command', 'num_agents', 'max_num_timesteps', 'total_timesteps', 'ego_location', 'alt_location', 'notes']
+#         if file.tell() == 0:
+#             writer.writerow(headers)
 
-        formatted_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        data = [
-            formatted_time,
-            args.env_config['level'],
-            'SUCCESS' if successful else 'FAILURE',
-            error,
-            f'python3 tester.py --env-config \'{json.dumps(args.env_config)}\' --ego-load {ego_path} --alt-load {partner_path}',
-            args.env_config['num_agents'],
-            args.env_config['max_num_timesteps'],
-            args.total_timesteps,
-            ego_path,
-            partner_path,
-            notes,
-        ]
-        writer.writerow(data)
+#         formatted_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+#         data = [
+#             formatted_time,
+#             args.env_config['level'],
+#             'SUCCESS' if successful else 'FAILURE',
+#             error,
+#             f'python3 tester.py --env-config \'{json.dumps(args.env_config)}\' --ego-load {ego_path} --alt-load {partner_path}',
+#             args.env_config['num_agents'],
+#             args.env_config['max_num_timesteps'],
+#             args.total_timesteps,
+#             ego_path,
+#             partner_path,
+#             notes,
+#         ]
+#         writer.writerow(data)
 
-def create_arglist():
-    parser = argparse.ArgumentParser("Overcooked 2 - Trainer Argument parser")
+def make_args_from_json():
+    parser = argparse.ArgumentParser("Overcooked 2 - Argument Parser")
 
-    parser.add_argument('--env-config',
-                    type=json.loads,
-                    default={},
-                    help='Config for the environment')
+    parser.add_argument('--json-path', '-j',
+                        type=str,
+                        default='env_args.json',
+                        help='Path to the json file containing the arguments')
 
-    parser.add_argument('--hyperparams',
-                       type=json.loads,
-                       default={},
-                       help='Hyperparameters for the training')
-    
-    # parser.add_argument('--ego-save',
-    #                     help='File to save the ego agent into')
-    
-    # parser.add_argument('--alt-save',
-    #                     help='File to save the partner agent into')
-    
-    parser.add_argument('--total-timesteps', '-t',
-                        type=int,
-                        default=500000,
-                        help='Number of time steps to run (ego perspective)')
-    
-    parser.add_argument('--record-interval',
-                        type=int,
-                        default=-1,
-                        help='Number of episodes to record. -1 to disable')
+    args = parser.parse_args()
+    json_path = args.json_path
 
-    parser.add_argument('--log',
-                    action='store_true',
-                    help='Log the run to runs/runlist.csv')
-    
-    parser.add_argument('--notes',
-                        help='Notes to add to the run log')
-
-    parser.add_argument('--wandb',
-                        action='store_true',
-                        help='Log the run to wandb')
-    
-    return parser.parse_args()
+    return json_path, create_arglist(args.json_path)
 
 def start_training(args=None):
-    # policy_kwargs = dict(
-    #     features_extractor_class=CustomCombinedExtractor,
-    # )
-
     policy_kwargs = dict(
         features_extractor_class=FlattenedDictExtractor
     )
 
     def make_overcooked_env():
-        return EpisodeRecorder(env=gym.make('OvercookedMultiCommEnv-v0', **args.env_config), record_interval=args.record_interval)
+        return EpisodeRecorder(env=gym.make('OvercookedMultiCommEnv-v0', arglist=args), record_interval=args.record_interval)
     
     # myenv = make_vec_env(make_overcooked_env, n_envs=4)
     # myenv = DummyVecEnv([lambda: myenv])  # The lambda function is used to make sure the environment is created in each subprocess
     # myenv = VecNormalize(venv=myenv, norm_obs_keys=["blockworld_map"])
 
-    env = EpisodeRecorder(env=gym.make('OvercookedMultiCommEnv-v0', **args.env_config), record_interval=args.record_interval)
+    env = EpisodeRecorder(env=gym.make('OvercookedMultiCommEnv-v0', arglist=args), record_interval=args.record_interval)
     partner = OnPolicyAgent(PPO('MultiInputPolicy', env, 
                                 n_steps = args.hyperparams.get('n_steps', 1000*5), 
                                 batch_size=args.hyperparams.get('batch_size', 1000), 
@@ -151,8 +123,8 @@ def start_training(args=None):
     # Format the current time for file name
     formatted_time = current_time.strftime("%Y-%m-%d_%H-%M-%S")
 
-    ego_path = f"model/{args.env_config['level']}/{formatted_time}/ppo_ego"
-    partner_path = f"model/{args.env_config['level']}/{formatted_time}/ppo_partner1"
+    ego_path = f"model/{args.level}/{run.id}_{formatted_time}/ppo_ego"1x
+    partner_path = f"model/{args.level['level']}/{run.id}_{formatted_time}/ppo_partner1"
 
     ego.save(ego_path)
     partner.model.save(partner_path)
@@ -160,21 +132,21 @@ def start_training(args=None):
     return ego_path, partner_path
 
 if __name__ == "__main__":
-    args = create_arglist()
+    json_path, args = make_args_from_json()
     try:
         if args.wandb:
             wandb.login()
             run = wandb.init(
                 # set the wandb project where this run will be logged
-                project="gym_comm",
+                project="gym-communication-spread",
 
-                name=f"{args.env_config['level']}_{args.total_timesteps}_learningrate_{args.hyperparams.get('learning_rate', 0.0003)}_run_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}",
+                name=f"{args.level}_{args.total_timesteps}_learningrate_{args.hyperparams.get('learning_rate', 0.0003)}_run_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}",
                 
                 # track hyperparameters and run metadata
                 config={
-                    "level": args.env_config['level'],
-                    "num_agents": args.env_config['num_agents'],
-                    "max_num_timesteps": args.env_config['max_num_timesteps'],
+                    "level": args.level,
+                    "num_agents": args.num_agents,
+                    "max_num_timesteps": args.max_num_timesteps,
                     "total_timesteps": args.total_timesteps,
                 },
 
@@ -182,6 +154,7 @@ if __name__ == "__main__":
 
                 save_code=True
             )
+            shutil.copy(json_path, f'params/{run.id}_params.json')
 
         start_time = time.time()
 
@@ -193,9 +166,9 @@ if __name__ == "__main__":
         hours, remainder = divmod(execution_time, 3600)
         minutes, seconds = divmod(remainder, 60)
 
-        log_run(args, ego_path=ego_path, partner_path=partner_path, successful=True, notes=f"Runtype: {args.notes}, Runtime: {int(hours):02d}h {int(minutes):02d}m {seconds:.2f}s")
+        # log_run(args, ego_path=ego_path, partner_path=partner_path, successful=True, notes=f"Runtype: {args.notes}, Runtime: {int(hours):02d}h {int(minutes):02d}m {seconds:.2f}s")
     except Exception as error:
-        log_run(args, error=error, successful=False)
+        # log_run(args, error=error, successful=False)
         print("An error has occured: ")
         traceback_str = traceback.format_exc()
         print(traceback_str)

@@ -2,6 +2,7 @@
 gym_cooking/misc/game/record/
 models/
 wandb/
+params/
 
 ## Adapted from: https://github.com/github/gitignore/blob/main/Python.gitignore
 *.swp

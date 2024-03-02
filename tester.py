@@ -14,6 +14,8 @@ import numpy as np
 
 import time
 
+from arglist import create_arglist
+
 # TODO This is super hacky, but it works. There are some weird bugs with how gym_comm is imported in relation to gym_cooking, not sure how to fix this. 
 import os
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -24,13 +26,13 @@ sys.path.append(relative_path)
 class EnvException(Exception):
     """ Raise when parameters do not align with environment """
 
-def create_arglist():
+def create_test_arglist():
     parser = argparse.ArgumentParser("Overcooked 2 - Tester Argument parser")
 
-    parser.add_argument('--env-config',
-                    type=json.loads,
-                    default={},
-                    help='Config for the environment')
+    parser.add_argument('--json-path', '-j',
+                        type=str,
+                        default='env_args.json',
+                        help='Path to the json file containing the arguments')
     
     parser.add_argument('--ego-load',
                         help='File to load the ego agent from')
@@ -50,8 +52,10 @@ def create_arglist():
     parser.add_argument('--render',
                         action='store_true',
                         help='Render the environment as it is being run')
+
+    args = parser.parse_args()
     
-    return parser.parse_args()
+    return create_arglist(args.json_path), args
 
 def gen_fixed(policy_type, location):
     agent = gen_load(policy_type, location)
@@ -105,10 +109,10 @@ policy_kwargs = dict(
     features_extractor_class=CustomCombinedExtractor,
 )
 
-args = create_arglist()
+env_args, args = create_test_arglist()
 print(f"Arguments: {args}")
 
-env = gym.make('OvercookedMultiCommEnv-v0', **args.env_config)
+env = gym.make('OvercookedMultiCommEnv-v0', arglist=env_args)
 altenv = env.getDummyEnv(1)
 print(f"Environment: {env}; Alt Environment: {altenv}")
 

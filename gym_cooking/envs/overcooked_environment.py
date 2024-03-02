@@ -355,6 +355,9 @@ class OvercookedEnvironment(gym.Env):
             else:
                 total_penalty += (len(distance_pairs) * MAX_PATH) / MAX_PATH
 
+        def manhattan_distance(point1, point2):
+            return abs(point1[0] - point2[0]) + abs(point1[1] - point2[1])
+
         # Next, look at the DELIVER subtasks.
         # NOTE: ONLY CAN HANDLE 1 DELIVERY SUBTASK, ALTER IN FUTURE
         for i, subtask in enumerate(self.all_subtasks):
@@ -367,11 +370,11 @@ class OvercookedEnvironment(gym.Env):
                     if len(start_object_location) == 0:
                         total_penalty += 2
                     else:
-                        distance = self.world.get_path_distance_between(agent.location, start_object_location[0])
+                        distance = self.world.get_path_distance_between(agent.location, start_object_location[0]) + manhattan_distance(agent.location, start_object_location[0])
                         if distance == 0:
                             delivery_distances = []
                             for subtask_action_obj_loc in self.world.get_all_object_locs(obj=subtask_action_obj):
-                                distance = self.world.get_path_distance_between(agent.location, subtask_action_obj_loc)
+                                distance = self.world.get_path_distance_between(agent.location, subtask_action_obj_loc) + manhattan_distance(agent.location, subtask_action_obj_loc)
                                 delivery_distances.append(
                                     distance
                                 )

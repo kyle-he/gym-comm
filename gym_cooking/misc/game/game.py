@@ -74,9 +74,6 @@ class Game:
         for agent in self.sim_agents:
             self.draw_agent(agent)
 
-        # draw communication
-        
-
         if self.play:
             pygame.display.flip()
             pygame.display.update()
