@@ -78,14 +78,15 @@ def start_training(args=None):
         features_extractor_class=FlattenedDictExtractor
     )
 
-    def make_overcooked_env():
-        return EpisodeRecorder(env=gym.make('OvercookedMultiCommEnv-v0', arglist=args), record_interval=args.record_interval)
-    
     # myenv = make_vec_env(make_overcooked_env, n_envs=4)
     # myenv = DummyVecEnv([lambda: myenv])  # The lambda function is used to make sure the environment is created in each subprocess
     # myenv = VecNormalize(venv=myenv, norm_obs_keys=["blockworld_map"])
 
-    env = EpisodeRecorder(env=gym.make('OvercookedMultiCommEnv-v0', arglist=args), record_interval=args.record_interval)
+    if args.wandb:
+        env = EpisodeRecorder(env=gym.make('OvercookedMultiCommEnv-v0', arglist=args), record_interval=args.record_interval)
+    else:
+        env = gym.make('OvercookedMultiCommEnv-v0', arglist=args)
+
     partner = OnPolicyAgent(PPO('MultiInputPolicy', env, 
                                 n_steps = args.hyperparams.get('n_steps', 1000*5), 
                                 batch_size=args.hyperparams.get('batch_size', 1000), 
@@ -123,7 +124,7 @@ def start_training(args=None):
     # Format the current time for file name
     formatted_time = current_time.strftime("%Y-%m-%d_%H-%M-%S")
 
-    ego_path = f"model/{args.level}/{run.id}_{formatted_time}/ppo_ego"1x
+    ego_path = f"model/{args.level}/{run.id}_{formatted_time}/ppo_ego"
     partner_path = f"model/{args.level['level']}/{run.id}_{formatted_time}/ppo_partner1"
 
     ego.save(ego_path)
@@ -132,6 +133,17 @@ def start_training(args=None):
     return ego_path, partner_path
 
 if __name__ == "__main__":
+    import torch
+
+    # Check if CUDA is available
+    if torch.cuda.is_available():
+        # Set PyTorch to use GPU
+        device = torch.device("cuda")
+        print("Using CUDA")
+    else:
+        device = torch.device("cpu")
+        print("CUDA is not available, using CPU")
+
     json_path, args = make_args_from_json()
     try:
         if args.wandb:

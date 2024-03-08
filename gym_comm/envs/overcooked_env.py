@@ -205,19 +205,22 @@ class OvercookedMultiEnv(SimultaneousEnv):
 
         action_dict = {}
 
-        ego_action, ego_communication = ego_action
-        alt_action, alt_communication = alt_action
+        ego_action, ego_communication_val = ego_action
+        alt_action, alt_communication_val = alt_action
+
+        # print(f"EGO COMM: {ego_communication}")
+        # print(f"ALT COMM: {alt_communication}")
 
         # let's convert this into a one-hot vector
         ego_communication = np.zeros(self.arglist.num_communication)
 
         if self.arglist.communication_on:
-            ego_communication[ego_action] = 1
+            ego_communication[ego_communication_val] = 1
 
         alt_communication = np.zeros(self.arglist.num_communication)
         if self.arglist.communication_on:
             if not self.arglist.ego_led:
-                alt_communication[alt_action] = 1
+                alt_communication[alt_communication_val] = 1
 
         self.per_agent_communications[0] = ego_communication
         self.per_agent_communications[1] = alt_communication

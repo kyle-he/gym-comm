@@ -9,10 +9,10 @@
         "learning_rate": 0.0009,
         "entrop_coef": 0.1
     },
-    "communication_on": true,
+    "communication_on": false,
     "num_communication": 100,
     "ego_led": false,
     "fow_radius": 2,
-    "wandb": false,
+    "wandb": true,
     "total_timesteps": 10000000
 }

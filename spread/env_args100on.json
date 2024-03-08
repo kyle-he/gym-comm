@@ -13,6 +13,6 @@
     "num_communication": 100,
     "ego_led": false,
     "fow_radius": 2,
-    "wandb": false,
+    "wandb": true,
     "total_timesteps": 10000000
 }

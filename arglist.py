@@ -93,7 +93,7 @@ def create_arglist(json_path):
         '--total-timesteps', str(args.get('total_timesteps', 20000000)),  
         '--record-interval', str(args.get('record_interval', 500)),      
         '--log' if args.get('log', False) else '',
-        '--notes', args.get('notes', 'No Communication'),                  
+        '--notes', args.get('notes', 'XXX notes'),                  
         '--wandb' if args.get('wandb', False) else '',
         '--communication-on' if args.get('communication_on', False) else '',
         '--num-communication', str(args.get('num_communication', 10)),
