@@ -80,6 +80,17 @@ def create_arglist(json_path):
                         default=2,
                         help='Field of view radius')
 
+    ## Agent Configs
+    parser.add_argument('--ego-config',
+                       type=json.loads,
+                       default={},
+                       help='Ego Config')
+    
+    parser.add_argument('--partner-config',
+                       type=json.loads,
+                       default={},
+                       help='Partner Config')
+
     ### LOAD JSON FILE ###
     
     with open(json_path, 'r') as file:
@@ -90,6 +101,8 @@ def create_arglist(json_path):
         '--num-agents', str(args['num_agents']), 
         '--max-num-timesteps', str(args['max_num_timesteps']),
         '--hyperparams', json.dumps(args['hyperparams']),
+        '--ego-config', json.dumps(args['ego_config']),
+        '--partner-config', json.dumps(args['partner_config']),
         '--total-timesteps', str(args.get('total_timesteps', 20000000)),  
         '--record-interval', str(args.get('record_interval', 500)),      
         '--log' if args.get('log', False) else '',

@@ -3,19 +3,15 @@
 #SBATCH --gres=gpu:1080:1
 #SBATCH --qos=general
 #SBATCH --time=3000
-#SBATCH --array=1-8%3
+#SBATCH --array=1-4%4
 #SBATCH --output=job_%A_%a.out
 
 # Define an array of JSON file paths (using relative paths)
 json_files=(
+    "spread/env_args8off.json"
+    "spread/env_args8on.json"
     "spread/env_args2off.json"
     "spread/env_args2on.json"
-    "spread/env_args5off.json"
-    "spread/env_args5on.json"
-    "spread/env_args20off.json"
-    "spread/env_args20on.json"
-    "spread/env_args100off.json"
-    "spread/env_args100on.json"
 )
 
 # Use the SLURM_ARRAY_TASK_ID to select the appropriate JSON file

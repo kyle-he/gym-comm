@@ -6,13 +6,21 @@
     "hyperparams": {
         "n_steps": 5000,
         "batch_size": 1000,
-        "learning_rate": 0.0009,
+        "learning_rate": 0.0004,
         "entrop_coef": 0.1
+    },
+    "ego_config": {
+        "ALLERGIC": false,
+        "BLIND": false
+    }, 
+    "partner_config": {
+        "ALLERGIC": false,
+        "BLIND": false
     },
     "communication_on": false,
     "num_communication": 2,
     "ego_led": false,
     "fow_radius": 2,
     "wandb": true,
-    "total_timesteps": 10000000
+    "total_timesteps": 6000000
 }

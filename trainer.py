@@ -1,6 +1,8 @@
 import gym
 from stable_baselines3 import PPO
 
+from sb3_contrib import RecurrentPPO
+
 from pantheonrl.common.agents import OnPolicyAgent
 import gym_comm
 import argparse
@@ -87,7 +89,7 @@ def start_training(args=None):
     else:
         env = gym.make('OvercookedMultiCommEnv-v0', arglist=args)
 
-    partner = OnPolicyAgent(PPO('MultiInputPolicy', env, 
+    partner = OnPolicyAgent(RecurrentPPO('MultiInputPolicy', env, 
                                 n_steps = args.hyperparams.get('n_steps', 1000*5), 
                                 batch_size=args.hyperparams.get('batch_size', 1000), 
                                 ent_coef=args.hyperparams.get('entrop_coef', 0.01),
@@ -101,7 +103,7 @@ def start_training(args=None):
 
     # Finally, you can construct an ego agent and train it in the environment
     # TODO update clip range, noise?, maybe increase batch size = 512? or n_steps, adjust n_steps = 300*12
-    ego = PPO('MultiInputPolicy', env, 
+    ego = RecurrentPPO('MultiInputPolicy', env, 
               n_steps = args.hyperparams.get('n_steps', 1000*5), 
               batch_size=args.hyperparams.get('batch_size', 1000), 
               ent_coef=args.hyperparams.get('entrop_coef', 0.01), 
@@ -125,7 +127,7 @@ def start_training(args=None):
     formatted_time = current_time.strftime("%Y-%m-%d_%H-%M-%S")
 
     ego_path = f"model/{args.level}/{run.id}_{formatted_time}/ppo_ego"
-    partner_path = f"model/{args.level['level']}/{run.id}_{formatted_time}/ppo_partner1"
+    partner_path = f"model/{args.level}/{run.id}_{formatted_time}/ppo_partner1"
 
     ego.save(ego_path)
     partner.model.save(partner_path)
@@ -148,11 +150,14 @@ if __name__ == "__main__":
     try:
         if args.wandb:
             wandb.login()
+            
+            json_filename = os.path.splitext(os.path.basename(json_path))[0]
+
             run = wandb.init(
                 # set the wandb project where this run will be logged
                 project="gym-communication-spread",
 
-                name=f"{args.level}_{args.total_timesteps}_learningrate_{args.hyperparams.get('learning_rate', 0.0003)}_run_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}",
+                name=f"{json_filename}_{args.level}_{args.total_timesteps}_learningrate_{args.hyperparams.get('learning_rate', 0.0003)}_run_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}",
                 
                 # track hyperparameters and run metadata
                 config={

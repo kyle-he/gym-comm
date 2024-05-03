@@ -103,32 +103,44 @@ class OvercookedMultiEnv(SimultaneousEnv):
         # print(self.get_partial_observability_FOW(1))
     
     def get_observation2(self, agent_idx, radius=1000):
-        self.base_env.display()
-
-        # for this case, we are garunteeing that the object will ALWAYS exist.
+        # Initialize default values for observations
         object_distances = [(0, 0) for x in range(4)]
         object_states = [0 for x in range(4)]
+        is_hidden = [1 for x in range(4)]  # Set to all 1's for BLIND condition
         objs = []
 
         # agent location in map
         agent_x, agent_y = self.base_env.sim_agents[agent_idx].location
 
-        for o in self.base_env.world.objects.values():
-            objs += o
-        for obj in objs:
-            x, y = obj.location
-            if isinstance(obj, Core.Object):
-                for content in obj.contents:
-                     if (isinstance(content, Core.Food)):
-                         object_states[Core.get_object_channel(content)] = content.state_index
-                     delta_x = x - agent_x
-                     delta_y = y - agent_y
-                     object_distances[Core.get_object_channel(content)] = (delta_x, delta_y)
+        if agent_idx == 0:
+            IS_BLIND = self.arglist.ego_config["BLIND"]
+        else:
+            IS_BLIND = self.arglist.partner_config["BLIND"]
 
-        is_hidden = [0 if abs(x) + abs(y) <= radius else 1 for x, y in object_distances]
+        if not IS_BLIND:
+            for o in self.base_env.world.objects.values():
+                objs += o
+            for obj in objs:
+                x, y = obj.location
+                if isinstance(obj, Core.Object):
+                    for content in obj.contents:
+                        if (isinstance(content, Core.Food)):
+                            object_states[Core.get_object_channel(content)] = content.state_index
+                        delta_x = x - agent_x
+                        delta_y = y - agent_y
+                        object_distances[Core.get_object_channel(content)] = (delta_x, delta_y)
+
+            is_hidden = [0 if abs(x) + abs(y) <= radius else 1 for x, y in object_distances]
+
         visible_distances = [(0, 0) if abs(x) + abs(y) <= radius else (x, y) for x, y in object_distances]
         x_distances = list(pair[0] for pair in visible_distances)
         y_distances = list(pair[1] for pair in visible_distances)
+
+        agent1_location = np.array([0, 0])
+        agent2_location = np.array([0, 0])
+        if not IS_BLIND:
+            agent1_location = np.array(self.base_env.sim_agents[0].location)
+            agent2_location = np.array(self.base_env.sim_agents[1].location)
 
         observations = {
             "timestep": np.array((self.base_env.t / self.base_env.arglist.max_num_timesteps, )),
@@ -137,9 +149,9 @@ class OvercookedMultiEnv(SimultaneousEnv):
             'state_encodings': np.array(object_states),
             'is_hidden': np.array(is_hidden),
             'completed_subtasks': np.array(self.base_env.completed_subtasks),
-            'agent1_location': np.array(self.base_env.sim_agents[0].location),
-            'agent2_location': np.array(self.base_env.sim_agents[1].location), 
-            'agent_is_holding': np.array((self.base_env.sim_agents[agent_idx].holding != None, False)),
+            'agent1_location': agent1_location,
+            'agent2_location': agent2_location, 
+            'agent_is_holding': np.array((0, 0)) if self.arglist.ego_config["BLIND"] else np.array((self.base_env.sim_agents[agent_idx].holding != None, False)),
             'agent1_comm': np.array(self.per_agent_communications[0]),
             'agent2_comm': np.array(self.per_agent_communications[1])
         }
@@ -221,19 +233,33 @@ class OvercookedMultiEnv(SimultaneousEnv):
         if self.arglist.communication_on:
             if not self.arglist.ego_led:
                 alt_communication[alt_communication_val] = 1
+        # object_locations = self.get_object_locations()
+        # binary_vector = np.zeros(30)  # Adjust size based on encoding needs
+
+        # # Assuming each coordinate is represented with up to 9 bits
+        # for i, obj in enumerate(['tomato', 'lettuce', 'plate']):
+        #     x, y = object_locations[obj]
+        #     binary_vector[i*9:(i*9)+4] = [int(b) for b in format(x, '04b')]  # 4 bits for x
+        #     binary_vector[(i*9)+4:(i+1)*9] = [int(b) for b in format(y, '05b')]  # 5 bits for y
 
         self.per_agent_communications[0] = ego_communication
         self.per_agent_communications[1] = alt_communication
 
         ego_action, alt_action = World.NAV_ACTIONS[ego_action], World.NAV_ACTIONS[alt_action]
-        
+
+        action_dict["agent-1"] = (0, 0)
+        action_dict["agent-0"] = (0, 0)
+
         if self.ego_agent_idx == 0:
-            action_dict["agent-0"] = ego_action 
-            action_dict["agent-1"] = alt_action
-            # action_dict["agent-1"] = (0, 0)
+            if self.arglist.ego_config["CAN_MOVE"]:
+                action_dict["agent-0"] = ego_action 
+            if self.arglist.partner_config["CAN_MOVE"]:
+                action_dict["agent-1"] = alt_action
         else:
-            action_dict["agent-1"] = ego_action 
-            action_dict["agent-0"] = alt_action 
+            if self.arglist.ego_config["CAN_MOVE"]:
+                action_dict["agent-1"] = ego_action 
+            if self.arglist.partner_config["CAN_MOVE"]:
+                action_dict["agent-0"] = alt_action
 
         # base env to show what is being communicated
         reward, done, info = self.base_env.step(action_dict)
@@ -253,7 +279,7 @@ class OvercookedMultiEnv(SimultaneousEnv):
             print("Agent 0 Reward Shaping: ", info["agent_0_reward_shaping"])
             print("Agent 1 Reward Shaping: ", info["agent_1_reward_shaping"])
 
-        return (self.get_observation2(0, radius=self.arglist.fow_radius), self.get_observation2(1, radius=self.arglist.fow_radius)), (reward - info["agent_0_reward_shaping"], reward - info["agent_1_reward_shaping"]), done, {} #info
+        return (self.get_observation2(0, radius=self.arglist.fow_radius), self.get_observation2(1, radius=self.arglist.fow_radius)), (reward - info["agent_0_reward_shaping"] - info["agent_1_reward_shaping"], reward - info["agent_0_reward_shaping"] - info["agent_1_reward_shaping"]), done, {} #info
 
     def multi_reset(self):
         """

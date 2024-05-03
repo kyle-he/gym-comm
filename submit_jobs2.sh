@@ -8,10 +8,10 @@
 
 # Define an array of JSON file paths (using relative paths)
 json_files=(
-    "spread/env_args20off.json"
-    "spread/env_args20on.json"
-    "spread/env_args100off.json"
-    "spread/env_args100on.json"
+    "spread/env_args8off.json"
+    "spread/env_args8on.json"
+    "spread/env_args2off.json"
+    "spread/env_args2on.json"
 )
 
 # Use the SLURM_ARRAY_TASK_ID to select the appropriate JSON file

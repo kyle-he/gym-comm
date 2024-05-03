@@ -24,7 +24,6 @@ AgentRepr = namedtuple("AgentRepr", "name location holding")
 # Colors for agents.
 COLORS = ['blue', 'magenta', 'yellow', 'green']
 
-
 class RealAgent:
     """Real Agent object that performs task inference and plans."""
 
@@ -259,13 +258,14 @@ class RealAgent:
 class SimAgent:
     """Simulation agent used in the environment object."""
 
-    def __init__(self, name, id_color, location):
+    def __init__(self, name, id_color, location, CONFIG):
         self.name = name
         self.color = id_color
         self.location = location
         self.holding = None
         self.action = (0, 0)
         self.has_delivered = False
+        self.config = CONFIG
 
     def __str__(self):
         return color(self.name[-1], self.color)
@@ -294,6 +294,9 @@ class SimAgent:
                 self.get_holding()))
 
     def acquire(self, obj):
+        if self.config["ALLERGIC"]:
+            return
+
         if self.holding is None:
             self.holding = obj
             self.holding.is_held = True

@@ -137,10 +137,17 @@ class OvercookedEnvironment(gym.Env):
                 elif phase == 3:
                     if len(self.sim_agents) < num_agents:
                         loc = line.split(' ')
+                        if (len(self.sim_agents) == 0):
+                            agent_config = self.arglist.ego_config
+                        else:
+                            agent_config = self.arglist.partner_config
+
                         sim_agent = SimAgent(
                                 name='agent-'+str(len(self.sim_agents)),
                                 id_color=COLORS[len(self.sim_agents)],
-                                location=(int(loc[0]), int(loc[1])))
+                                location=(int(loc[0]), int(loc[1])),
+                                CONFIG=agent_config
+                            )
                         # sim_agent = SimAgent(
                         #         name='agent-'+str(len(self.sim_agents)+1),
                         #         id_color=COLORS[len(self.sim_agents)],
@@ -380,8 +387,12 @@ class OvercookedEnvironment(gym.Env):
                                 )
                             min_delivery_distance = min(delivery_distances)
                             total_penalty += min_delivery_distance / MAX_PATH
+                            # print("DELIVER SHAPING:", min_delivery_distance / MAX_PATH)
+                            # print(str(self))
                         else:
                             total_penalty += distance / MAX_PATH + 1
+                            # print("DELIVER SHAPING 2:", distance / MAX_PATH + 1)
+                            # print(str(self))
 
         return total_penalty
     

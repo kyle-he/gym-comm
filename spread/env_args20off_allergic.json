@@ -1,0 +1,28 @@
+{
+    "level": "random-open-divider_salad_small_cramped",
+    "num_agents": 2,
+    "max_num_timesteps": 900,
+    "env_config": {},
+    "hyperparams": {
+        "n_steps": 5000,
+        "batch_size": 1000,
+        "learning_rate": 0.0006,
+        "entrop_coef": 0.1
+    },
+    "ego_config": {
+        "CAN_MOVE": false,
+        "ALLERGIC": true,
+        "BLIND": false
+    }, 
+    "partner_config": {
+        "CAN_MOVE": true,
+        "ALLERGIC": false,
+        "BLIND": true
+    },
+    "communication_on": false,
+    "num_communication": 8,
+    "ego_led": false,
+    "fow_radius": 10,
+    "wandb": true,
+    "total_timesteps": 10000000
+}

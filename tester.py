@@ -90,15 +90,15 @@ def run_test(ego, env, num_episodes, render=False):
                 # sleep(1/60)
 
         rewards.append(reward)
-        print("------------------ Episode Complete ------------------")
-        print("All Subtasks: ", env.base_env.all_subtasks)
-        print("Completed Subtasks (encoding): ", env.base_env.completed_subtasks)
-        print("Completed Subtasks: ")
-        for i, complete in enumerate(env.base_env.completed_subtasks):
-            if complete == 1:
-                print(f"{env.base_env.all_subtasks[i]}")
+        # print("------------------ Episode Complete ------------------")
+        # print("All Subtasks: ", env.base_env.all_subtasks)
+        # print("Completed Subtasks (encoding): ", env.base_env.completed_subtasks)
+        # print("Completed Subtasks: ")
+        # for i, complete in enumerate(env.base_env.completed_subtasks):
+        #     if complete == 1:
+        #         print(f"{env.base_env.all_subtasks[i]}")
         print("Total Reward: ", reward)
-        print(str(env.base_env))
+        # print(str(env.base_env))
         # import pdb; pdb.set_trace()
 
     env.close()
@@ -122,4 +122,4 @@ alt = gen_fixed('PPO', args.alt_load)
 env.add_partner_agent(alt)
 print(f'Alt: {alt}')
 
-run_test(ego, env, args.total_episodes, args.render)
+run_test(ego, altenv, args.total_episodes, args.render)

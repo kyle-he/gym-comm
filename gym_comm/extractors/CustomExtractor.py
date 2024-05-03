@@ -30,6 +30,10 @@ class CustomCombinedExtractor(BaseFeaturesExtractor):
                 input_size = subspace.shape[0] * subspace.shape[1]
                 extractors[key] = nn.Sequential(nn.Flatten(), nn.Linear(input_size, 32))
                 total_concat_size += 32
+            elif "comm" in key:
+                input_size = subspace.shape[0]
+                extractors[key] = nn.Linear(input_size, 128)
+                total_concat_size += input_size // 2
             else:
                 # Run through a simple MLP
                 extractors[key] = nn.Linear(subspace.shape[0], 16)

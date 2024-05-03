@@ -1,5 +1,5 @@
 {
-    "level": "random-open-divider_salad_small_wide",
+    "level": "random-salad-superwide",
     "num_agents": 2,
     "max_num_timesteps": 900,
     "env_config": {},
